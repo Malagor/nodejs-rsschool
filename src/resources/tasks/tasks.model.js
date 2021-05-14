@@ -6,9 +6,9 @@ class Task {
     this.title = title || 'Task';
     this.order = order || 0;
     this.description = description || 'Description';
-    this.userId = userId || 0;
-    this.boardId = boardId || 0;
-    this.columnId = columnId || 0;
+    this.userId = userId || null;
+    this.boardId = boardId || null;
+    this.columnId = columnId || null;
   }
 }
 

@@ -1,65 +1,44 @@
 const uuid = require('uuid');
+const database = require('../../memoryDb/memoryDb');
 
-// { id, name, login, password }
-const userTable = [{
-  id: 'cbd836d9-ff4b-45be-bc71-9749eabfc980',
-  name: 'Alex',
-  login: 'alex',
-  password: '12345'
-}];
+const { users } = database.memoryDb;
 
-const getAll = async () => userTable;
+const getAll = async () => users;
 
 const getUser = async (id) => {
   if (typeof id !== 'string') return null;
-  return userTable.find(user => user.id === id);
+  return users.find(user => user.id === id);
 };
 
 const setUser = async (user) => {
-  const id = uuid.v4();
-  const {name, login, password} = user;
-  userTable.push({
-    id,
-    name,
-    login,
-    password });
-
-  return {
-    id,
-    name,
-    login
-  };
+  const newUser = { ...user, id: uuid.v4() };
+  users.push(newUser);
+  return newUser;
 };
 
 const updateUser = async (id, userData) => {
-  const index = userTable.findIndex(user => user.id === id);
-
+  const index = users.findIndex(user => user.id === id);
   if (index !== -1) {
-    const {name, login, password} = userData;
-    userTable[index] = {id, name, login, password};
-    return {
-      id,
-      name,
-      login
-    };
-  }
-
-  return -1;
-};
-
-const deleteUser = async (id) => {
-  if (typeof id !== 'string') return -1;
-  const index = userTable.findIndex(user => user.id === id);
-  if (index !== -1) {
-    userTable.splice(index, 1);
+    const newUserData = { ...userData, id };
+    users[index] = newUserData;
+    return newUserData;
   }
   return index;
 };
 
-  module.exports = {
-    getAll,
-    setUser,
-    getUser,
-    updateUser,
-    deleteUser
-  };
+const deleteUser = async (userId) => {
+  if (typeof userId !== 'string') return -1;
+  const index = users.findIndex(user => user.id === userId);
+  if (index !== -1) {
+    users.splice(index, 1);
+  }
+  return index;
+};
+
+module.exports = {
+  getAll,
+  setUser,
+  getUser,
+  updateUser,
+  deleteUser
+};

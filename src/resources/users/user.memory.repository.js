@@ -1,4 +1,3 @@
-const uuid = require('uuid');
 const database = require('../../memoryDb/memoryDb');
 
 const { users } = database.memoryDb;
@@ -11,17 +10,16 @@ const getUser = async (id) => {
 };
 
 const setUser = async (user) => {
-  const newUser = { ...user, id: uuid.v4() };
-  users.push(newUser);
-  return newUser;
+  users.push(user);
+  return user;
 };
 
 const updateUser = async (id, userData) => {
   const index = users.findIndex(user => user.id === id);
   if (index !== -1) {
-    const newUserData = { ...userData, id };
-    users[index] = newUserData;
-    return newUserData;
+    const user = {...users[index], ...userData, id};
+    users[index] = user;
+    return user;
   }
   return index;
 };

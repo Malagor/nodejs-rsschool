@@ -1,4 +1,3 @@
-const uuid = require('uuid');
 const database = require('../../memoryDb/memoryDb');
 
 let { tasks } = database.memoryDb;
@@ -7,17 +6,16 @@ const getAllTasks = async (boardId) => tasks.filter(task => task.boardId === boa
 
 const getTask = async (boardId, taskId) => tasks.find(task => task.id === taskId && task.boardId === boardId);
 
-const setTask = async (boardId, taskData) => {
-  const newTaskDataWithId = { ...taskData, boardId, id: uuid.v4() };
-  tasks.push(newTaskDataWithId);
-  return newTaskDataWithId;
+const setTask = async (task) => {
+  tasks.push(task);
+  return task;
 };
 
 const updateTask = async (boardId, taskId, taskData) => {
-  const index = tasks.findIndex(task => task.id === taskId);
+  const index = tasks.findIndex(task => task.id === taskId && task.boardId === boardId);
 
   if (index !== -1) {
-    const newTaskData = { ...taskData, id: taskId };
+    const newTaskData = {...tasks[index], ...taskData, id: taskId };
     tasks[index] = newTaskData;
     return newTaskData;
   }

@@ -2,10 +2,17 @@ const uuid = require('uuid');
 const Column = require('./column.model');
 
 class Board {
-  constructor({ title, columns } = {}) {
-    this.id = uuid.v4();
+  constructor({ id, title, columns } = {}) {
+    this.id = id || uuid.v4();
     this.title = title || 'Board';
-    this.column = columns || [new Column()];
+    this.columns = Board.createColumns(columns);
+  }
+
+  static createColumns(columns) {
+    if (Array.isArray(columns)) {
+      return columns.map(col => new Column({ ...col }))
+    }
+    return [new Column()];
   }
 }
 

@@ -1,5 +1,3 @@
-const uuid = require('uuid');
-const Column = require('./column.model');
 const database = require('../../memoryDb/memoryDb');
 
 const { boards } = database.memoryDb;
@@ -12,35 +10,15 @@ const getBoard = async (id) => {
 };
 
 const setBoard = async (board) => {
-  const { title, columns } = board;
-
-  let columnsWithId;
-
-  if (columns) {
-    columnsWithId = columns.map(col => ({
-        ...col,
-        id: uuid.v4()
-      }));
-  } else {
-    columnsWithId = [new Column()];
-  }
-
-  const boardData = {
-    columns: columnsWithId,
-    title,
-    id: uuid.v4(),
-  };
-
-  boards.push(boardData);
-
-  return boardData;
+  boards.push(board);
+  return board;
 };
 
 const updateBoard = async (id, boardData) => {
   const index = boards.findIndex(board => board.id === id);
 
   if (index !== -1) {
-    const newBoardData = { ...boardData, id };
+    const newBoardData = {...boards[index], ...boardData, id };
     boards[index] = newBoardData;
     return newBoardData;
   }

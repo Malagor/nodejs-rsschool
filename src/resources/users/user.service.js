@@ -2,18 +2,18 @@ const usersRepo = require('./user.memory.repository');
 const tasksService = require('../tasks/tasks.service');
 
 const getAll = () => usersRepo.getAll();
-const getUser = (id) => usersRepo.getUser(id);
-const setUser = (user) => usersRepo.setUser(user);
-const updateUser = (id, user) => usersRepo.updateUser(id, user);
-const deleteUser = (id) => {
-  usersRepo.deleteUser(id);
+const get = (id) => usersRepo.get(id);
+const set = (user) => usersRepo.set(user);
+const update = (id, user) => usersRepo.update(id, user);
+const remove = (id) => {
+  usersRepo.remove(id);
   tasksService.deleteUserFromTask(id);
 };
 
 module.exports = {
   getAll,
-  setUser,
-  getUser,
-  updateUser,
-  deleteUser
+  set,
+  get,
+  update,
+  remove
 };

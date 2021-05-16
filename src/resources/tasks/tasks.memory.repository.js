@@ -2,16 +2,16 @@ const database = require('../../memoryDb/memoryDb');
 
 let { tasks } = database.memoryDb;
 
-const getAllTasks = async (boardId) => tasks.filter(task => task.boardId === boardId);
+const getAll = async (boardId) => tasks.filter(task => task.boardId === boardId);
 
-const getTask = async (boardId, taskId) => tasks.find(task => task.id === taskId && task.boardId === boardId);
+const get = async (boardId, taskId) => tasks.find(task => task.id === taskId && task.boardId === boardId);
 
-const setTask = async (task) => {
+const set = async (task) => {
   tasks.push(task);
   return task;
 };
 
-const updateTask = async (boardId, taskId, taskData) => {
+const update = async (boardId, taskId, taskData) => {
   const index = tasks.findIndex(task => task.id === taskId && task.boardId === boardId);
 
   if (index !== -1) {
@@ -24,7 +24,7 @@ const updateTask = async (boardId, taskId, taskData) => {
 };
 
 
-const deleteTask = async (boardId, taskId) => {
+const remove = async (boardId, taskId) => {
   if (typeof taskId !== 'string') return -1;
   const index = tasks.findIndex(task => task.id === taskId);
   if (index !== -1) {
@@ -53,11 +53,11 @@ const deleteTasksFromBoard = async (boardId) => {
 };
 
 module.exports = {
-  getAllTasks,
-  getTask,
-  setTask,
-  updateTask,
-  deleteTask,
+  getAll,
+  get,
+  set,
+  update,
+  remove,
   deleteTasksFromBoard,
   deleteUserFromTask
 };

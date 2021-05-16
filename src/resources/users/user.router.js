@@ -10,14 +10,14 @@ router.route('/').get(async (req, res) => {
 });
 
 router.route('/:id').get(async (req, res) => {
-  const user = await usersService.getUser(req.params.id);
+  const user = await usersService.get(req.params.id);
   res
     .status(user ? 200 : 404)
     .json(user ? User.toResponse(user) : {});
 });
 
 router.route('/').post(async (req, res) => {
-  const user = await usersService.setUser(new User({ ...req.body }));
+  const user = await usersService.set(new User({ ...req.body }));
 
   res
     .status(user ? 201 : 400)
@@ -27,7 +27,7 @@ router.route('/').post(async (req, res) => {
 router.route('/:id').put(async (req, res) => {
   const { id } = req.params;
   const userData = new User({...req.body, id});
-  const user = await usersService.updateUser(id, userData);
+  const user = await usersService.update(id, userData);
 
   res
     .status(user !== -1 ? 200 : 400)
@@ -35,7 +35,7 @@ router.route('/:id').put(async (req, res) => {
 });
 
 router.route('/:id').delete(async (req, res) => {
-  const index = await usersService.deleteUser(req.params.id);
+  const index = await usersService.remove(req.params.id);
   res
     .status(index !== -1 ? 204 : 404)
     .json();

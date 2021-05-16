@@ -4,7 +4,7 @@ const Task = require('./tasks.model');
 
 router.route('/').get(async (req, res) => {
   const { boardId } = req.params;
-  const tasks = await tasksService.getAllTasks(boardId);
+  const tasks = await tasksService.getAll(boardId);
   res
     .status(tasks ? 200 : 400)
     .json(tasks);
@@ -13,7 +13,7 @@ router.route('/').get(async (req, res) => {
 router.route('/:taskId').get(async (req, res) => {
   const { taskId, boardId } = req.params;
 
-  const task = await tasksService.getTask(boardId, taskId );
+  const task = await tasksService.get(boardId, taskId );
   res
     .status(task ? 200 : 404)
     .json(task);
@@ -21,7 +21,7 @@ router.route('/:taskId').get(async (req, res) => {
 
 router.route('/').post(async (req, res) => {
   const { boardId } = req.params;
-  const task = await tasksService.setTask(new Task({
+  const task = await tasksService.set(new Task({
     ...req.body,
     boardId
   }));
@@ -34,7 +34,7 @@ router.route('/').post(async (req, res) => {
 router.route('/:taskId').put(async (req, res) => {
   const {taskId, boardId} = req.params;
   const taskData = req.body;
-  const task = await tasksService.updateTask(boardId, taskId, taskData);
+  const task = await tasksService.update(boardId, taskId, taskData);
 
   res
     .status(task ? 200 : 400)
@@ -43,7 +43,7 @@ router.route('/:taskId').put(async (req, res) => {
 
 router.route('/:taskId').delete(async (req, res) => {
   const {taskId, boardId} = req.params;
-  const index = await tasksService.deleteTask(boardId, taskId);
+  const index = await tasksService.remove(boardId, taskId);
   res
     .status(index !== -1 ? 204 : 404)
     .json();

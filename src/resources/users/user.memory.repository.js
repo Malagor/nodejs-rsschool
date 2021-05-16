@@ -6,7 +6,7 @@ const getAll = async () => users;
 
 const get = async (id) => {
   if (typeof id !== 'string') return null;
-  return users.find(user => user.id === id);
+  return users.find((user) => user.id === id);
 };
 
 const set = async (user) => {
@@ -15,9 +15,9 @@ const set = async (user) => {
 };
 
 const update = async (id, userData) => {
-  const index = users.findIndex(user => user.id === id);
+  const index = users.findIndex((user) => user.id === id);
   if (index !== -1) {
-    const user = {...users[index], ...userData, id};
+    const user = { ...users[index], ...userData, id };
     users[index] = user;
     return user;
   }
@@ -26,7 +26,7 @@ const update = async (id, userData) => {
 
 const remove = async (userId) => {
   if (typeof userId !== 'string') return -1;
-  const index = users.findIndex(user => user.id === userId);
+  const index = users.findIndex((user) => user.id === userId);
   if (index !== -1) {
     users.splice(index, 1);
   }
@@ -38,5 +38,5 @@ module.exports = {
   set,
   get,
   update,
-  remove
+  remove,
 };

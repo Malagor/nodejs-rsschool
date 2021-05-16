@@ -15,5 +15,5 @@ module.exports = {
   set,
   get,
   update,
-  remove
+  remove,
 };

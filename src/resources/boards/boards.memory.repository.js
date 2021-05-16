@@ -6,7 +6,7 @@ const getAll = async () => boards;
 
 const get = async (id) => {
   if (typeof id !== 'string') return null;
-  return boards.find(board => board.id === id);
+  return boards.find((board) => board.id === id);
 };
 
 const set = async (board) => {
@@ -15,10 +15,10 @@ const set = async (board) => {
 };
 
 const update = async (id, boardData) => {
-  const index = boards.findIndex(board => board.id === id);
+  const index = boards.findIndex((board) => board.id === id);
 
   if (index !== -1) {
-    const newBoardData = {...boards[index], ...boardData, id };
+    const newBoardData = { ...boards[index], ...boardData, id };
     boards[index] = newBoardData;
     return newBoardData;
   }
@@ -28,7 +28,7 @@ const update = async (id, boardData) => {
 
 const remove = async (boardId) => {
   if (typeof boardId !== 'string') return -1;
-  const index = boards.findIndex(board => board.id === boardId);
+  const index = boards.findIndex((board) => board.id === boardId);
   if (index !== -1) {
     boards.splice(index, 1);
   }
@@ -40,5 +40,5 @@ module.exports = {
   get,
   set,
   update,
-  remove
+  remove,
 };

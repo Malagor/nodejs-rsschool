@@ -10,7 +10,7 @@ class Board {
 
   static createColumns(columns) {
     if (Array.isArray(columns)) {
-      return columns.map(col => new Column({ ...col }))
+      return columns.map((col) => new Column({ ...col }));
     }
     return [new Column()];
   }

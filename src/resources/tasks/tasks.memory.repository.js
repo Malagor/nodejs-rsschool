@@ -8,9 +8,9 @@ const getAll = async (boardId) =>
 const get = async (boardId, taskId) =>
   tasks.find((task) => task.id === taskId && task.boardId === boardId);
 
-const set = async (task) => {
+const create = async (task) => {
   tasks.push(task);
-  return task;
+  return get(task.boardId, task.id);
 };
 
 const update = async (boardId, taskId, taskData) => {
@@ -18,29 +18,29 @@ const update = async (boardId, taskId, taskData) => {
     (task) => task.id === taskId && task.boardId === boardId
   );
 
-  if (index !== -1) {
-    const newTaskData = { ...tasks[index], ...taskData, id: taskId };
-    tasks[index] = newTaskData;
-    return newTaskData;
-  }
-
-  return -1;
+  if (index === -1) return null;
+  tasks[index] = { ...tasks[index], ...taskData, id: taskId };
+  return get(boardId, taskId);
 };
 
 const remove = async (boardId, taskId) => {
   const index = tasks.findIndex((task) => task.id === taskId);
-  if (index !== -1) {
-    tasks.splice(index, 1);
-  }
-  return index;
+  if (index === -1) return false;
+
+  return tasks.splice(index, 1).length;
 };
 
 const deleteUserFromTask = async (userId) => {
-  tasks.forEach((task, idx) => {
-    if (task.userId === userId) {
-      tasks[idx].userId = null;
-    }
-  });
+  try {
+    tasks.forEach((task, idx) => {
+      if (task.userId === userId) {
+        tasks[idx].userId = null;
+      }
+    });
+    return true;
+  } catch (e) {
+    return false;
+  }
 };
 
 const deleteTasksFromBoard = async (boardId) => {
@@ -48,7 +48,6 @@ const deleteTasksFromBoard = async (boardId) => {
     tasks = tasks.filter((task) => task.boardId !== boardId);
     return true;
   } catch (e) {
-    process.stderr.write('Error delete all tasks from board', e);
     return false;
   }
 };
@@ -56,7 +55,7 @@ const deleteTasksFromBoard = async (boardId) => {
 module.exports = {
   getAll,
   get,
-  set,
+  create,
   update,
   remove,
   deleteTasksFromBoard,

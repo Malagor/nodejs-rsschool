@@ -1,34 +1,45 @@
 const router = require('express').Router();
-const User = require('./user.model');
+const { StatusCodes } = require('http-status-codes');
 const usersService = require('./user.service');
+const User = require('./user.model');
+const errorResponse = require('../../utils/errorResponse');
 
 router.route('/').get(async (req, res) => {
   const users = await usersService.getAll();
-  res.status(users ? 200 : 400).json(users.map(User.toResponse));
+  if (!users) return errorResponse(res, StatusCodes.NOT_FOUND);
+
+  return res.status(StatusCodes.OK).json(users.map(User.toResponse));
 });
 
 router.route('/:id').get(async (req, res) => {
   const user = await usersService.get(req.params.id);
-  res.status(user ? 200 : 404).json(user ? User.toResponse(user) : {});
+  if (!user) return errorResponse(res, StatusCodes.NOT_FOUND);
+
+  return res.status(StatusCodes.OK).json(User.toResponse(user));
 });
 
 router.route('/').post(async (req, res) => {
-  const user = await usersService.set(new User({ ...req.body }));
+  const user = await usersService.create(new User({ ...req.body }));
+  if (!user) return errorResponse(res, StatusCodes.BAD_REQUEST);
 
-  res.status(user ? 201 : 400).json(User.toResponse(user));
+  return res.status(StatusCodes.CREATED).json(User.toResponse(user));
 });
 
 router.route('/:id').put(async (req, res) => {
   const { id } = req.params;
-  const userData = new User({ ...req.body, id });
+  const userData = req.body;
   const user = await usersService.update(id, userData);
+  if (!user) return errorResponse(res, StatusCodes.BAD_REQUEST);
 
-  res.status(user !== -1 ? 200 : 400).json(user ? User.toResponse(user) : {});
+  return res.status(StatusCodes.OK).json(User.toResponse(user));
 });
 
 router.route('/:id').delete(async (req, res) => {
-  const index = await usersService.remove(req.params.id);
-  res.status(index !== -1 ? 204 : 404).json();
+  const answer = await usersService.remove(req.params.id);
+  if (!answer.every((item) => !!item)) {
+    return errorResponse(res, StatusCodes.NOT_FOUND);
+  }
+  return res.status(StatusCodes.NO_CONTENT).send();
 });
 
 module.exports = router;

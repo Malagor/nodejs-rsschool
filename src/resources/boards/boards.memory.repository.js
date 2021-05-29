@@ -4,31 +4,26 @@ const { boards } = database.memoryDb;
 
 const getAll = async () => [...boards];
 
-const get = async (id) => boards.find((board) => board.id === id);
+const get = async (itemId) => boards.find((item) => item.id === itemId);
 
-const create = async (board) => {
-  const { id } = board;
-  boards.push(board);
-  return get(id);
+const create = async (item) => {
+  boards.push(item);
+  return get(item.id);
 };
 
-const update = async (id, boardData) => {
-  const index = boards.findIndex((board) => board.id === id);
+const update = async (itemId, itemData) => {
+  const index = boards.findIndex((item) => item.id === itemId);
+  if (index === -1) return null;
 
+  boards[index] = { ...boards[index], ...itemData, itemId };
+  return get(itemId);
+};
+
+const remove = async (itemId) => {
+  const index = boards.findIndex((item) => item.id === itemId);
   if (index === -1) return false;
 
-  boards[index] = { ...boards[index], ...boardData, id };
-
-  return get(id);
-};
-
-const remove = async (boardId) => {
-  if (typeof boardId !== 'string') return -1;
-  const index = boards.findIndex((board) => board.id === boardId);
-  if (index !== -1) {
-    boards.splice(index, 1);
-  }
-  return index;
+  return boards.splice(index, 1).length;
 };
 
 module.exports = {

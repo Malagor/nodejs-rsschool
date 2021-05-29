@@ -2,16 +2,13 @@ const database = require('../../memoryDb/memoryDb');
 
 const { users } = database.memoryDb;
 
-const getAll = async () => users;
+const getAll = async () => [...users];
 
-const get = async (id) => {
-  if (typeof id !== 'string') return null;
-  return users.find((user) => user.id === id);
-};
+const get = async (id) => users.find((user) => user.id === id);
 
-const set = async (user) => {
+const create = async (user) => {
   users.push(user);
-  return user;
+  return get(user.id);
 };
 
 const update = async (id, userData) => {
@@ -24,18 +21,16 @@ const update = async (id, userData) => {
 };
 
 const remove = async (userId) => {
-  if (typeof userId !== 'string') return -1;
   const index = users.findIndex((user) => user.id === userId);
-  if (index !== -1) {
-    users.splice(index, 1);
-  }
-  return false;
+  if (index === -1) return false;
+
+  return users.splice(index, 1).length;
 };
 
 module.exports = {
   getAll,
-  set,
   get,
+  create,
   update,
   remove,
 };

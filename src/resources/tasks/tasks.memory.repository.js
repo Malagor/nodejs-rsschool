@@ -28,7 +28,6 @@ const update = async (boardId, taskId, taskData) => {
 };
 
 const remove = async (boardId, taskId) => {
-  if (typeof taskId !== 'string') return -1;
   const index = tasks.findIndex((task) => task.id === taskId);
   if (index !== -1) {
     tasks.splice(index, 1);
@@ -45,7 +44,6 @@ const deleteUserFromTask = async (userId) => {
 };
 
 const deleteTasksFromBoard = async (boardId) => {
-  if (typeof boardId !== 'string') return -1;
   try {
     tasks = tasks.filter((task) => task.boardId !== boardId);
     return true;

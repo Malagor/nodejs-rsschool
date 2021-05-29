@@ -3,7 +3,7 @@ const tasksService = require('../tasks/tasks.service');
 
 const getAll = () => boardRepo.getAll();
 const get = (id) => boardRepo.get(id);
-const set = (board) => boardRepo.set(board);
+const create = (board) => boardRepo.create(board);
 const update = (id, board) => boardRepo.update(id, board);
 const remove = (id) => {
   tasksService.deleteTasksFromBoard(id);
@@ -13,7 +13,7 @@ const remove = (id) => {
 module.exports = {
   getAll,
   get,
-  set,
+  create,
   update,
   remove,
 };

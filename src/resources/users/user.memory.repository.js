@@ -17,11 +17,10 @@ const set = async (user) => {
 const update = async (id, userData) => {
   const index = users.findIndex((user) => user.id === id);
   if (index !== -1) {
-    const user = { ...users[index], ...userData, id };
-    users[index] = user;
-    return user;
+    users[index] = { ...users[index], ...userData, id };
+    return get(id);
   }
-  return index;
+  return null;
 };
 
 const remove = async (userId) => {
@@ -30,7 +29,7 @@ const remove = async (userId) => {
   if (index !== -1) {
     users.splice(index, 1);
   }
-  return index;
+  return false;
 };
 
 module.exports = {

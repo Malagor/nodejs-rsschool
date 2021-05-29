@@ -2,28 +2,24 @@ const database = require('../../memoryDb/memoryDb');
 
 const { boards } = database.memoryDb;
 
-const getAll = async () => boards;
+const getAll = async () => [...boards];
 
-const get = async (id) => {
-  if (typeof id !== 'string') return null;
-  return boards.find((board) => board.id === id);
-};
+const get = async (id) => boards.find((board) => board.id === id);
 
-const set = async (board) => {
+const create = async (board) => {
+  const { id } = board;
   boards.push(board);
-  return board;
+  return get(id);
 };
 
 const update = async (id, boardData) => {
   const index = boards.findIndex((board) => board.id === id);
 
-  if (index !== -1) {
-    const newBoardData = { ...boards[index], ...boardData, id };
-    boards[index] = newBoardData;
-    return newBoardData;
-  }
+  if (index === -1) return false;
 
-  return index;
+  boards[index] = { ...boards[index], ...boardData, id };
+
+  return get(id);
 };
 
 const remove = async (boardId) => {
@@ -38,7 +34,7 @@ const remove = async (boardId) => {
 module.exports = {
   getAll,
   get,
-  set,
+  create,
   update,
   remove,
 };

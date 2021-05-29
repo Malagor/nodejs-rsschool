@@ -4,7 +4,13 @@ const Board = require('./boards.model');
 
 router.route('/').get(async (req, res) => {
   const boards = await boardsService.getAll();
-  res.status(boards ? 200 : 400).json(boards);
+  if (boards) {
+    res.status(200);
+    res.json(boards);
+  } else {
+    res.status(400);
+  }
+  // res.status(boards ? 200 : 400).json(boards);
 });
 
 router.route('/:boardId').get(async (req, res) => {
@@ -14,7 +20,7 @@ router.route('/:boardId').get(async (req, res) => {
 });
 
 router.route('/').post(async (req, res) => {
-  const boards = await boardsService.set(new Board({ ...req.body }));
+  const boards = await boardsService.create(new Board({ ...req.body }));
   res.status(boards ? 201 : 400).json(boards);
 });
 

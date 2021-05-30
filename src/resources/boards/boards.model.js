@@ -18,9 +18,9 @@ class Board {
    * Create a board
    * @param {string} [id=uuid.v4()] - id of board
    * @param {string} [title=Board] - Title of board
-   * @param {ColumnType[]} columns - array data for create columns
+   * @param {ColumnType[]|null} [columns=null] - array data for create columns
    */
-  constructor({ id = uuid.v4(), title = 'Board', columns }) {
+  constructor({ id = uuid.v4(), title = 'Board', columns = null }) {
     this.id = id;
     this.title = title;
     this.columns = Board.createColumns(columns);

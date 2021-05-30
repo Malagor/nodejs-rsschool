@@ -3,13 +3,13 @@ const uuid = require('uuid');
 /**
  * @typedef TaskType
  * @type {object}
- * @param {string} id - an ID task
- * @param {string} title - title
- * @param {number} order - order task on the column
- * @param {string} description - description of task
- * @param {string | null} userId - id user who create task
- * @param {string | null} boardId - id board where are pin task
- * @param {string | null} columnId - id column where are pin task
+ * @property {string} id - an ID task
+ * @property {string} title - title
+ * @property {number} order - order task on the column
+ * @property {string} description - description of task
+ * @property {string | null} userId - id user who create task
+ * @property {string | null} boardId - id board where are pin task
+ * @property {string | null} columnId - id column where are pin task
  */
 
 /**

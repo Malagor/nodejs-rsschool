@@ -1,7 +1,8 @@
 const database = require('../../memoryDb/memoryDb');
 
 /**
- * @type {TaskType[]} - table of Tasks from Database
+ * @type {TaskType[]}
+ * @description table of Tasks from Database
  */
 let { tasks } = database.memoryDb;
 

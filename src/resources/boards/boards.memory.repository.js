@@ -1,13 +1,14 @@
 const database = require('../../memoryDb/memoryDb');
 
 /**
- * @type {BoardType[]} - table of Boards from Database
+ * @type {BoardType[]}
+ * @description table of Boards from Database
  */
 const { boards } = database.memoryDb;
 
 /**
  * Return all Boards
- * @return {Promise<[BoardType]>}
+ * @return {Promise<*>} Promise array of Boards
  */
 const getAll = async () => [...boards];
 

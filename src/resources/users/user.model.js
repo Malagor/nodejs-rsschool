@@ -3,10 +3,10 @@ const uuid = require('uuid');
 /**
  * @typedef UserType
  * @type {object}
- * @param {string} id - an ID
- * @param {string} name - name of user
- * @param {string} login - login
- * @param {string} password - password
+ * @property {string} id - an ID
+ * @property {string} name - name of user
+ * @property {string} login - login
+ * @property {string} password - password
  */
 
 /**

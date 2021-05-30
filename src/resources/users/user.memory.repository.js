@@ -1,7 +1,8 @@
 const database = require('../../memoryDb/memoryDb');
 
 /**
- * @type {UserType[]} - table of User from Database
+ * @type {UserType[]}
+ * @description table of User from Database
  */
 const { users } = database.memoryDb;
 

@@ -15,7 +15,7 @@ export interface ITask {
   title: string;
   order: number;
   description: string;
-  userId: string | null;
+  userId: string;
   boardId: string;
   columnId: string;
 }

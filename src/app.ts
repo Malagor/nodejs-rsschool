@@ -5,9 +5,9 @@ import path from 'path';
 import YAML from 'yamljs';
 
 import { fileURLToPath } from 'url';
-import { router as userRouter } from './resources/users/user.router';
-import { router as boardsRouter } from './resources/boards/boards.router';
-import { router as tasksRouter } from './resources/tasks/tasks.router';
+import { router as userRouter } from './resources/users/user.router.js';
+import { router as boardsRouter } from './resources/boards/boards.router.js';
+import { router as tasksRouter } from './resources/tasks/tasks.router.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 

@@ -1,5 +1,5 @@
-import { memoryDb } from '../../memoryDb/memoryDb';
-import { ITask } from '../../types';
+import { memoryDb } from '../../memoryDb/memoryDb.js';
+import { ITask } from '../../types.js';
 
 let { tasks } = memoryDb;
 
@@ -45,7 +45,7 @@ const deleteUserFromTask = async (userId: string): Promise<boolean> => {
     tasks.forEach((task) => {
       const locTask = task;
       if (locTask.userId === userId) {
-        locTask.userId = null;
+        locTask.userId = '';
       }
     });
     return true;

@@ -1,5 +1,5 @@
-import uuid from 'uuid';
-import { IUser } from '../../types';
+import { v4 as uuidv4 } from 'uuid';
+import { IUser } from '../../types.js';
 
 export default class User {
   id: string;
@@ -11,7 +11,7 @@ export default class User {
   password: string | undefined;
 
   constructor(user: IUser) {
-    this.id = user.id || uuid.v4();
+    this.id = user.id || uuidv4();
     this.name = user.name;
     this.login = user.login;
     this.password = user.password;

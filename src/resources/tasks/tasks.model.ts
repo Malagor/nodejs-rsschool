@@ -1,5 +1,5 @@
-import uuid from 'uuid';
-import { ITask } from '../../types';
+import { v4 as uuidv4 } from 'uuid';
+import { ITask } from '../../types.js';
 
 export default class Task {
   id: string;
@@ -16,13 +16,23 @@ export default class Task {
 
   columnId: string;
 
-  constructor(task: ITask) {
-    this.id = task.id || uuid.v4();
-    this.title = task.title || 'Task';
-    this.order = task.order || 0;
-    this.description = task.description || 'Description';
-    this.userId = task.userId || '';
-    this.boardId = task.boardId || '';
-    this.columnId = task.columnId || '';
+  constructor(
+    {
+      id = uuidv4(),
+      title = 'Task',
+      description = 'Description',
+      order = 0,
+      userId = '',
+      boardId = '',
+      columnId = '',
+    } = {} as ITask
+  ) {
+    this.id = id;
+    this.title = title;
+    this.order = order;
+    this.description = description;
+    this.userId = userId;
+    this.boardId = boardId;
+    this.columnId = columnId;
   }
 }

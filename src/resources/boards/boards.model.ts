@@ -1,6 +1,6 @@
-import uuid from 'uuid';
-import { IColumn, IBoard } from '../../types';
-import Column from './column.model';
+import { v4 as uuidv4 } from 'uuid';
+import { IColumn, IBoard } from '../../types.js';
+import Column from './column.model.js';
 
 export class Board {
   id: string;
@@ -9,7 +9,7 @@ export class Board {
 
   columns: IColumn[] | null;
 
-  constructor({ id = uuid.v4(), title = 'Board', columns = null }: IBoard) {
+  constructor({ id = uuidv4(), title = 'Board', columns = null }: IBoard) {
     this.id = id;
     this.title = title;
     this.columns = Board.createColumns(columns);

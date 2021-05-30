@@ -16,9 +16,10 @@ router.route('/').get(async (_req: Express.Request, res: Express.Response) => {
 router
   .route('/:id')
   .get(async (req: Express.Request, res: Express.Response) => {
-    if (!req.params.id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    const { id } = req.params;
+    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
 
-    const user = await usersService.get(req.params.id);
+    const user = await usersService.get(id);
     if (!user) return errorResponse(res, StatusCodes.NOT_FOUND);
 
     return res.status(StatusCodes.OK).json(User.toResponse(user));
@@ -35,6 +36,8 @@ router
   .route('/:id')
   .put(async (req: Express.Request, res: Express.Response) => {
     const { id } = req.params;
+    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+
     const userData = req.body;
     const user = await usersService.update(id, userData);
     if (!user) return errorResponse(res, StatusCodes.BAD_REQUEST);
@@ -45,9 +48,10 @@ router
 router
   .route('/:id')
   .delete(async (req: Express.Request, res: Express.Response) => {
-    if (!req.params.id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    const { id } = req.params;
+    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
 
-    const answer = await usersService.remove(req.params.id);
+    const answer = await usersService.remove(id);
     if (!answer.every((item) => !!item)) {
       return errorResponse(res, StatusCodes.NOT_FOUND);
     }

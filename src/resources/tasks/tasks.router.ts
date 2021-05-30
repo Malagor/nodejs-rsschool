@@ -8,6 +8,8 @@ const router: Express.Router = Router({ mergeParams: true });
 
 router.route('/').get(async (req: Express.Request, res: Express.Response) => {
   const { boardId } = req.params;
+  if (!boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
+
   const tasks = await tasksService.getAll(boardId);
 
   if (!tasks) return errorResponse(res, StatusCodes.NOT_FOUND);
@@ -19,6 +21,7 @@ router
   .route('/:taskId')
   .get(async (req: Express.Request, res: Express.Response) => {
     const { taskId, boardId } = req.params;
+    if (!taskId || !boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
 
     const task = await tasksService.get(boardId, taskId);
 
@@ -45,6 +48,8 @@ router
   .route('/:taskId')
   .put(async (req: Express.Request, res: Express.Response) => {
     const { taskId, boardId } = req.params;
+    if (!taskId || !boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
+
     const taskData = req.body;
     const task = await tasksService.update(boardId, taskId, taskData);
 
@@ -57,6 +62,8 @@ router
   .route('/:taskId')
   .delete(async (req: Express.Request, res: Express.Response) => {
     const { taskId, boardId } = req.params;
+    if (!taskId || !boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
+
     const isSuccess = await tasksService.remove(boardId, taskId);
 
     if (!isSuccess) {

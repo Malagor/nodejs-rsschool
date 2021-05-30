@@ -1,4 +1,6 @@
-const memoryDb = {
+import { IDatabase } from '../types';
+
+export const memoryDb: IDatabase = {
   users: [
     {
       id: 'cbd836d9-ff4b-45be-bc71-9749eabfc980',
@@ -64,8 +66,4 @@ const memoryDb = {
       columnId: 'fb2b3c20-0cd7-47c8-a9d5-5df289346e07',
     },
   ],
-};
-
-module.exports = {
-  memoryDb,
 };

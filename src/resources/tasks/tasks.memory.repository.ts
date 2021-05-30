@@ -42,9 +42,10 @@ const remove = async (boardId: string, taskId: string): Promise<boolean> => {
 
 const deleteUserFromTask = async (userId: string): Promise<boolean> => {
   try {
-    tasks.forEach((task, idx) => {
-      if (task.userId === userId) {
-        tasks[idx].userId = null;
+    tasks.forEach((task) => {
+      const locTask = task;
+      if (locTask.userId === userId) {
+        locTask.userId = null;
       }
     });
     return true;

@@ -10,11 +10,11 @@ export default class Task {
 
   description: string;
 
-  userId: string;
+  userId: string | null;
 
-  boardId: string;
+  boardId: string | null;
 
-  columnId: string;
+  columnId: string | null;
 
   constructor(
     {
@@ -22,9 +22,9 @@ export default class Task {
       title = 'Task',
       description = 'Description',
       order = 0,
-      userId = '',
-      boardId = '',
-      columnId = '',
+      userId = null,
+      boardId = null,
+      columnId = null,
     } = {} as ITask
   ) {
     this.id = id;

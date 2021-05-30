@@ -8,9 +8,9 @@ export default class Column {
 
   order: number;
 
-  constructor(column?: IColumn) {
-    this.id = column?.id || uuidv4();
-    this.title = column?.title || 'Column';
-    this.order = column?.order || 0;
+  constructor({ id = uuidv4(), title = 'Column', order = 0 } = {} as IColumn) {
+    this.id = id;
+    this.title = title;
+    this.order = order;
   }
 }

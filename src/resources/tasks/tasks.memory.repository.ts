@@ -13,6 +13,8 @@ const get = async (
   tasks.find((task) => task.id === taskId && task.boardId === boardId);
 
 const create = async (task: ITask): Promise<ITask | undefined> => {
+  if (!task.boardId) return undefined;
+
   tasks.push(task);
   return get(task.boardId, task.id);
 };
@@ -45,7 +47,7 @@ const deleteUserFromTask = async (userId: string): Promise<boolean> => {
     tasks.forEach((task) => {
       const locTask = task;
       if (locTask.userId === userId) {
-        locTask.userId = '';
+        locTask.userId = null;
       }
     });
     return true;

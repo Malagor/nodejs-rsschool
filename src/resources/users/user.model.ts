@@ -10,11 +10,11 @@ export default class User {
 
   password: string | undefined;
 
-  constructor(user: IUser) {
-    this.id = user.id || uuidv4();
-    this.name = user.name;
-    this.login = user.login;
-    this.password = user.password;
+  constructor({ id = uuidv4(), login, name, password } = {} as IUser) {
+    this.id = id;
+    this.name = name;
+    this.login = login;
+    this.password = password;
   }
 
   static toResponse(user: IUser): IUser {

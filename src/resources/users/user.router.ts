@@ -1,8 +1,8 @@
 import Express, { Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import User from './user.model.js';
-import * as usersService from './user.service.js';
-import { errorResponse } from '../../utils/errorResponse.js';
+import User from './user.model';
+import * as usersService from './user.service';
+import { errorResponse } from '../../utils/errorResponse';
 
 const router: Express.Router = Router();
 
@@ -52,7 +52,7 @@ router
     if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
 
     const answer = await usersService.remove(id);
-    if (!answer.every((item) => !!item)) {
+    if (!answer.every((item) => item)) {
       return errorResponse(res, StatusCodes.NOT_FOUND);
     }
     return res.status(StatusCodes.NO_CONTENT).send();

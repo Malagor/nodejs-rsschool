@@ -1,6 +1,6 @@
-import { IBoard } from '../../types.js';
-import * as boardRepo from './boards.memory.repository.js';
-import * as tasksService from '../tasks/tasks.service.js';
+import { IBoard } from '../../types';
+import * as boardRepo from './boards.memory.repository';
+import * as tasksService from '../tasks/tasks.service';
 
 const getAll = (): Promise<IBoard[]> => boardRepo.getAll();
 

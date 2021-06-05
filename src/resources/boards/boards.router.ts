@@ -1,8 +1,8 @@
 import Express, { Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { Board } from './boards.model.js';
-import * as boardsService from './boards.service.js';
-import { errorResponse } from '../../utils/errorResponse.js';
+import { Board } from './boards.model';
+import * as boardsService from './boards.service';
+import { errorResponse } from '../../utils/errorResponse';
 
 const router: Express.Router = Router();
 

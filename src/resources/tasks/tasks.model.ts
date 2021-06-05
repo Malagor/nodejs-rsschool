@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ITask } from '../../types.js';
+import { ITask } from '../../types';
 
 export default class Task {
   id: string;

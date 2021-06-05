@@ -1,8 +1,8 @@
 import Express, { Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import * as tasksService from './tasks.service.js';
-import Task from './tasks.model.js';
-import { errorResponse } from '../../utils/errorResponse.js';
+import * as tasksService from './tasks.service';
+import Task from './tasks.model';
+import { errorResponse } from '../../utils/errorResponse';
 
 const router: Express.Router = Router({ mergeParams: true });
 

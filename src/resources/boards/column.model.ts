@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { IColumn } from '../../types.js';
+import { IColumn } from '../../types';
 
 export default class Column {
   id: string;

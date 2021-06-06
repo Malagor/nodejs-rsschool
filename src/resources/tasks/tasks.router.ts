@@ -24,6 +24,7 @@ router
           `Error request tasks from board with id: ${boardId}`
         )
       );
+      return;
     }
 
     res.status(OK).json(tasks);
@@ -41,6 +42,7 @@ router
     const task = await tasksService.get(boardId, taskId);
     if (!task) {
       next(new CustomError(NOT_FOUND, `Task with id: ${boardId} not found`));
+      return;
     }
 
     res.status(OK).json(task);
@@ -54,6 +56,7 @@ router
 
     if (!task) {
       next(new CustomError(NOT_FOUND, `Error create task`));
+      return;
     }
 
     res.status(CREATED).json(task);
@@ -73,6 +76,7 @@ router
 
     if (!task) {
       next(new CustomError(NOT_FOUND, `Error update task`));
+      return;
     }
 
     res.status(OK).json(task);
@@ -91,6 +95,7 @@ router
 
     if (!isSuccess) {
       next(new CustomError(NOT_FOUND, `Error delete task`));
+      return;
     }
     res.status(NO_CONTENT).send();
   });

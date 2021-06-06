@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { finished } from 'stream';
-import { appendFile } from 'fs';
+import { appendFileSync } from 'fs';
 import chalk from 'chalk';
 import { coloredStatusCode } from '../common/coloredSratusCode';
 import { currentTime } from '../common/currentTime';
@@ -33,18 +33,9 @@ export const logger = (
 
     process.stdout.write(`${strForConsole}\n`);
 
-    appendFile(
-      './src/queries.log',
-      `${strForFile}\n`,
-      { flag: 'a', encoding: 'utf-8' },
-      (err) => {
-        if (err) {
-          const errStr = JSON.stringify(err);
-          process.stderr.write(
-            `${chalk.red('[error]')} Can not write log file ${errStr}\n`
-          );
-        }
-      }
-    );
+    appendFileSync('./src/queries.log', `${strForFile}\n`, {
+      flag: 'a',
+      encoding: 'utf-8',
+    });
   });
 };

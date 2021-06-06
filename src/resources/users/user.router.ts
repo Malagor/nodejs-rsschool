@@ -20,6 +20,7 @@ router
     const users = await usersService.getAll();
     if (!users) {
       next(new CustomError(INTERNAL_SERVER_ERROR, `Can not get users data`));
+      return;
     }
     res.status(OK).json(users.map(User.toResponse));
   });
@@ -84,7 +85,8 @@ router
 
     const answer = await usersService.remove(id);
     if (!answer.every((item) => item)) {
-      throw new CustomError(NOT_FOUND, `User not deleted`);
+      next(new CustomError(NOT_FOUND, `User not deleted`));
+      return;
     }
     res.status(NO_CONTENT).send();
   });

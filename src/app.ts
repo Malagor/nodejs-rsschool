@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import swaggerUI from 'swagger-ui-express';
 
 import path from 'path';
@@ -7,7 +7,7 @@ import YAML from 'yamljs';
 import { router as userRouter } from './resources/users/user.router';
 import { router as boardsRouter } from './resources/boards/boards.router';
 import { router as tasksRouter } from './resources/tasks/tasks.router';
-import { handlerError } from './middlewares/handlerError';
+import { CustomError, handlerError } from './middlewares/handlerError';
 import { logger } from './classes/Logger';
 import { errorLogger } from './classes/ErrorLogger';
 
@@ -32,7 +32,10 @@ app.use('/users', userRouter);
 app.use('/boards/:boardId/tasks', tasksRouter);
 app.use('/boards', boardsRouter);
 
-app.use(handlerError, errorLogger);
+app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
+  errorLogger(err);
+  handlerError(err, req, res, next);
+});
 
 process.on('uncaughtException', (err) => {
   errorLogger(err);

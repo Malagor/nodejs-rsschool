@@ -25,5 +25,5 @@ export const handlerError = (
     message,
   });
 
-  next(err);
+  next();
 };

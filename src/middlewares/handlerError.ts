@@ -1,4 +1,5 @@
-import { Response } from 'express';
+import { Response, Request, NextFunction } from 'express';
+import { INTERNAL_SERVER_ERROR } from 'http-status-codes';
 
 export class CustomError extends Error {
   public statusCode: number;
@@ -6,16 +7,23 @@ export class CustomError extends Error {
 
   constructor(statusCode: number, message: string) {
     super(message);
-    this.statusCode = statusCode;
-    this.message = message;
+    this.statusCode = statusCode || INTERNAL_SERVER_ERROR;
+    this.message = message || 'Server Error!';
   }
 }
 
-export const handlerError = (err: CustomError, res: Response): void => {
+export const handlerError = (
+  err: CustomError,
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   const { statusCode, message } = err;
   res.status(statusCode).json({
     status: 'error',
     statusCode,
     message,
   });
+
+  next(err);
 };

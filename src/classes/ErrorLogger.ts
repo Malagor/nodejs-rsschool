@@ -18,8 +18,6 @@ export const errorLogger = (err: CustomError | Error): void => {
   strForConsole += ` ${err.name} ${err.message}`;
   strForFile += ` ${err.name} ${err.message}`;
 
-  process.stdout.write(`${strForConsole}\n`);
-
   appendFile(
     './src/queries.log',
     `${strForFile}\n`,
@@ -48,4 +46,6 @@ export const errorLogger = (err: CustomError | Error): void => {
       }
     }
   );
+
+  process.stdout.write(`${strForConsole}\n`);
 };

@@ -1,75 +1,114 @@
-import Express, { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as tasksService from './tasks.service';
 import Task from './tasks.model';
-import { errorResponse } from '../../utils/errorResponse';
+import { CustomError } from '../../middlewares/handlerError';
 
-const router: Express.Router = Router({ mergeParams: true });
-
-router.route('/').get(async (req: Express.Request, res: Express.Response) => {
-  const { boardId } = req.params;
-  if (!boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
-
-  const tasks = await tasksService.getAll(boardId);
-
-  if (!tasks) return errorResponse(res, StatusCodes.NOT_FOUND);
-
-  return res.status(StatusCodes.OK).json(tasks);
-});
+const router: Router = Router({ mergeParams: true });
+const { NOT_FOUND, BAD_REQUEST, OK, CREATED, NO_CONTENT } = StatusCodes;
 
 router
-  .route('/:taskId')
-  .get(async (req: Express.Request, res: Express.Response) => {
-    const { taskId, boardId } = req.params;
-    if (!taskId || !boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
+  .route('/')
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { boardId } = req.params;
+      if (!boardId) {
+        throw new CustomError(BAD_REQUEST, `Not correct board id: ${boardId}`);
+      }
 
-    const task = await tasksService.get(boardId, taskId);
+      const tasks = await tasksService.getAll(boardId);
+      if (!tasks) {
+        throw new CustomError(
+          NOT_FOUND,
+          `Error request tasks from board with id: ${boardId}`
+        );
+      }
 
-    if (!task) return errorResponse(res, StatusCodes.NOT_FOUND);
-
-    return res.status(StatusCodes.OK).json(task);
-  });
-
-router.route('/').post(async (req: Express.Request, res: Express.Response) => {
-  const { boardId } = req.params;
-  const task = await tasksService.create(
-    new Task({
-      ...req.body,
-      boardId,
-    })
-  );
-
-  if (!task) return errorResponse(res, StatusCodes.BAD_REQUEST);
-
-  return res.status(StatusCodes.CREATED).json(task);
-});
-
-router
-  .route('/:taskId')
-  .put(async (req: Express.Request, res: Express.Response) => {
-    const { taskId, boardId } = req.params;
-    if (!taskId || !boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
-
-    const taskData = req.body;
-    const task = await tasksService.update(boardId, taskId, taskData);
-
-    if (!task) return errorResponse(res, StatusCodes.BAD_REQUEST);
-
-    return res.status(StatusCodes.OK).json(task);
-  });
-
-router
-  .route('/:taskId')
-  .delete(async (req: Express.Request, res: Express.Response) => {
-    const { taskId, boardId } = req.params;
-    if (!taskId || !boardId) return errorResponse(res, StatusCodes.BAD_REQUEST);
-
-    const isSuccess = await tasksService.remove(boardId, taskId);
-
-    if (!isSuccess) {
-      return errorResponse(res, StatusCodes.NOT_FOUND);
+      res.status(OK).json(tasks);
+    } catch (e) {
+      next(e);
     }
-    return res.status(StatusCodes.NO_CONTENT).send();
+  });
+
+router
+  .route('/:taskId')
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { taskId, boardId } = req.params;
+      if (!taskId || !boardId) {
+        throw new CustomError(BAD_REQUEST, `Not correct board or task id`);
+      }
+
+      const task = await tasksService.get(boardId, taskId);
+      if (!task) {
+        throw new CustomError(NOT_FOUND, `Task with id: ${boardId} not found`);
+      }
+
+      res.status(OK).json(task);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+router
+  .route('/')
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { boardId } = req.params;
+      const task = await tasksService.create(
+        new Task({ ...req.body, boardId })
+      );
+
+      if (!task) {
+        throw new CustomError(NOT_FOUND, `Error create task`);
+      }
+
+      res.status(CREATED).json(task);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+router
+  .route('/:taskId')
+  .put(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { taskId, boardId } = req.params;
+      if (!taskId || !boardId) {
+        throw new CustomError(BAD_REQUEST, `Not correct board or task id`);
+      }
+
+      const taskData = req.body;
+      const task = await tasksService.update(boardId, taskId, taskData);
+
+      if (!task) {
+        throw new CustomError(NOT_FOUND, `Error update task`);
+      }
+
+      res.status(OK).json(task);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+router
+  .route('/:taskId')
+  .delete(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { taskId, boardId } = req.params;
+      if (!taskId || !boardId) {
+        throw new CustomError(BAD_REQUEST, `Not correct board or task id`);
+      }
+
+      const isSuccess = await tasksService.remove(boardId, taskId);
+
+      if (!isSuccess) {
+        throw new CustomError(NOT_FOUND, `Error delete task`);
+      }
+      res.status(NO_CONTENT).send();
+    } catch (e) {
+      next(e);
+    }
   });
 
 export { router };

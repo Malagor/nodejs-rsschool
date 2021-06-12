@@ -1,5 +1,6 @@
 import chalk from 'chalk';
-import { appendFileSync } from 'fs';
+import fs, { appendFileSync } from 'fs';
+import path from 'path';
 import { currentTime } from '../common/currentTime';
 import { coloredStatusCode } from '../common/coloredSratusCode';
 import { CustomError } from '../middlewares/handlerError';
@@ -18,11 +19,21 @@ export const errorLogger = (err: CustomError | Error): void => {
   strForConsole += ` ${err.name} ${err.message}`;
   strForFile += ` ${err.name} ${err.message}`;
 
-  appendFileSync('./src/queries.log', `${strForFile}\n`, {
-    flag: 'a',
-    encoding: 'utf-8',
+  fs.mkdir(path.join(__dirname, '../logs/'), (error) => {
+    if (error && error.code !== 'EEXIST') {
+      process.stderr.write('Catalog have not been created');
+    }
   });
-  appendFileSync('./src/error.log', `${strForFile}\n`, {
+
+  appendFileSync(
+    path.join(__dirname, '../logs/queries.log'),
+    `${strForFile}\n`,
+    {
+      flag: 'a',
+      encoding: 'utf-8',
+    }
+  );
+  appendFileSync(path.join(__dirname, '../logs/error.log'), `${strForFile}\n`, {
     flag: 'a',
     encoding: 'utf-8',
   });

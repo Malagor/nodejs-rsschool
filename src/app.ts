@@ -31,6 +31,9 @@ app.use(logger);
 app.use('/users', userRouter);
 app.use('/boards/:boardId/tasks', tasksRouter);
 app.use('/boards', boardsRouter);
+app.get('/error', () => {
+  throw new Error('Test error!');
+});
 
 app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
   errorLogger(err);

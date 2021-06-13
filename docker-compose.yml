@@ -1,7 +1,7 @@
 version: '3'
 services:
   task6-node-express:
-    image: node
+    image: malagor/node
     build: .
     ports:
     - ${PORT}:${PORT}
@@ -17,7 +17,7 @@ services:
     - ./logs:/usr/src/app/src/logs
     - ./src:/usr/src/app/src
   task6-postgres:
-    image: postrges
+    image: malagor/postgres
     build:
       ./database/
     networks:

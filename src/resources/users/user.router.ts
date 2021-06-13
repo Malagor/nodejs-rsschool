@@ -1,61 +1,94 @@
-import Express, { Router } from 'express';
+import { Router, Response, Request, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import User from './user.model.js';
-import * as usersService from './user.service.js';
-import { errorResponse } from '../../utils/errorResponse.js';
+import User from './user.model';
+import * as usersService from './user.service';
+import { CustomError } from '../../middlewares/handlerError';
 
-const router: Express.Router = Router();
+const router: Router = Router();
+const {
+  NOT_FOUND,
+  BAD_REQUEST,
+  OK,
+  CREATED,
+  NO_CONTENT,
+  INTERNAL_SERVER_ERROR,
+} = StatusCodes;
 
-router.route('/').get(async (_req: Express.Request, res: Express.Response) => {
-  const users = await usersService.getAll();
-  if (!users) return errorResponse(res, StatusCodes.NOT_FOUND);
-
-  return res.status(StatusCodes.OK).json(users.map(User.toResponse));
-});
+router
+  .route('/')
+  .get(async (_req: Request, res: Response, next: NextFunction) => {
+    const users = await usersService.getAll();
+    if (!users) {
+      next(new CustomError(INTERNAL_SERVER_ERROR, `Can not get users data`));
+      return;
+    }
+    res.status(OK).json(users.map(User.toResponse));
+  });
 
 router
   .route('/:id')
-  .get(async (req: Express.Request, res: Express.Response) => {
+  .get(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    if (!id) {
+      next(new CustomError(BAD_REQUEST, `Not correct user id`));
+      return;
+    }
 
     const user = await usersService.get(id);
-    if (!user) return errorResponse(res, StatusCodes.NOT_FOUND);
 
-    return res.status(StatusCodes.OK).json(User.toResponse(user));
+    if (!user) {
+      next(new CustomError(NOT_FOUND, `User with id: ${id} not found`));
+      return;
+    }
+
+    res.status(OK).json(User.toResponse(user));
   });
 
-router.route('/').post(async (req: Express.Request, res: Express.Response) => {
-  const user = await usersService.create(new User({ ...req.body }));
-  if (!user) return errorResponse(res, StatusCodes.BAD_REQUEST);
-
-  return res.status(StatusCodes.CREATED).json(User.toResponse(user));
-});
-
 router
-  .route('/:id')
-  .put(async (req: Express.Request, res: Express.Response) => {
-    const { id } = req.params;
-    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+  .route('/')
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await usersService.create(new User({ ...req.body }));
+    if (!user) {
+      next(new CustomError(NOT_FOUND, `User not created`));
+      return;
+    }
 
-    const userData = req.body;
-    const user = await usersService.update(id, userData);
-    if (!user) return errorResponse(res, StatusCodes.BAD_REQUEST);
-
-    return res.status(StatusCodes.OK).json(User.toResponse(user));
+    res.status(CREATED).json(User.toResponse(user));
   });
 
 router
   .route('/:id')
-  .delete(async (req: Express.Request, res: Express.Response) => {
+  .put(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    if (!id) {
+      next(new CustomError(BAD_REQUEST, `Not correct param - user id: ${id}`));
+      return;
+    }
+
+    const user = await usersService.update(id, req.body);
+    if (!user) {
+      next(new CustomError(NOT_FOUND, `User not updated`));
+      return;
+    }
+
+    res.status(OK).json(User.toResponse(user));
+  });
+
+router
+  .route('/:id')
+  .delete(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) {
+      next(new CustomError(BAD_REQUEST, `Not correct param - user id: ${id}`));
+      return;
+    }
 
     const answer = await usersService.remove(id);
-    if (!answer.every((item) => !!item)) {
-      return errorResponse(res, StatusCodes.NOT_FOUND);
+    if (!answer.every((item) => item)) {
+      next(new CustomError(NOT_FOUND, `User not deleted`));
+      return;
     }
-    return res.status(StatusCodes.NO_CONTENT).send();
+    res.status(NO_CONTENT).send();
   });
 
 export { router };

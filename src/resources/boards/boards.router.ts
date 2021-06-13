@@ -1,60 +1,87 @@
-import Express, { Router } from 'express';
+import { Router, Response, Request, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { Board } from './boards.model.js';
-import * as boardsService from './boards.service.js';
-import { errorResponse } from '../../utils/errorResponse.js';
+import { Board } from './boards.model';
+import * as boardsService from './boards.service';
+import { CustomError } from '../../middlewares/handlerError';
 
-const router: Express.Router = Router();
+const { NOT_FOUND, BAD_REQUEST, OK, CREATED, NO_CONTENT } = StatusCodes;
+const router: Router = Router();
 
-router.route('/').get(async (_req: Express.Request, res: Express.Response) => {
-  const boards = await boardsService.getAll();
-  if (!boards) return errorResponse(res, StatusCodes.NOT_FOUND);
+router
+  .route('/')
+  .get(async (_req: Request, res: Response, next: NextFunction) => {
+    const boards = await boardsService.getAll();
+    if (!boards) {
+      next(new CustomError(NOT_FOUND, `Error request boards`));
+      return;
+    }
 
-  return res.status(StatusCodes.OK).json(boards);
-});
+    res.status(OK).json(boards);
+  });
 
 router
   .route('/:id')
-  .get(async (req: Express.Request, res: Express.Response) => {
+  .get(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    if (!id) {
+      next(new CustomError(BAD_REQUEST, `Not correct board id: ${id}`));
+      return;
+    }
 
     const board = await boardsService.get(id);
-    if (!board) return errorResponse(res, StatusCodes.NOT_FOUND);
+    if (!board) {
+      next(new CustomError(NOT_FOUND, `Error request board with id: ${id}`));
+      return;
+    }
 
-    return res.status(StatusCodes.OK).json(board);
+    res.status(OK).json(board);
   });
 
-router.route('/').post(async (req: Express.Request, res: Express.Response) => {
-  const board = await boardsService.create(new Board({ ...req.body }));
-  if (!board) return errorResponse(res, StatusCodes.BAD_REQUEST);
+router
+  .route('/')
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    const board = await boardsService.create(new Board({ ...req.body }));
+    if (!board) {
+      next(new CustomError(NOT_FOUND, `Error create board`));
+      return;
+    }
 
-  return res.status(StatusCodes.CREATED).json(board);
-});
+    res.status(CREATED).json(board);
+  });
 
 router
   .route('/:id')
-  .put(async (req: Express.Request, res: Express.Response) => {
+  .put(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    if (!id) {
+      next(new CustomError(BAD_REQUEST, `Not correct board id: ${id}`));
+      return;
+    }
 
     const newData = await boardsService.update(id, req.body);
-    if (!newData) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    if (!newData) {
+      next(new CustomError(NOT_FOUND, `Error update board with id: ${id}`));
+      return;
+    }
 
-    return res.status(StatusCodes.OK).json(newData);
+    res.status(OK).json(newData);
   });
 
 router
   .route('/:id')
-  .delete(async (req: Express.Request, res: Express.Response) => {
+  .delete(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    if (!id) return errorResponse(res, StatusCodes.BAD_REQUEST);
+    if (!id) {
+      next(new CustomError(BAD_REQUEST, `Not correct board id: ${id}`));
+      return;
+    }
 
     const answer = await boardsService.remove(id);
     if (!answer.every((item) => item)) {
-      return errorResponse(res, StatusCodes.NOT_FOUND);
+      next(new CustomError(NOT_FOUND, `Error delete board with id: ${id}`));
+      return;
     }
-    return res.status(StatusCodes.NO_CONTENT).send();
+    res.status(NO_CONTENT).send();
   });
 
 export { router };

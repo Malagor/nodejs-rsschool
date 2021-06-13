@@ -1,5 +1,5 @@
-import { IBoard } from '../../types.js';
-import { memoryDb } from '../../memoryDb/memoryDb.js';
+import { IBoard } from '../../types';
+import { memoryDb } from '../../memoryDb/memoryDb';
 
 const { boards } = memoryDb;
 

@@ -1,5 +1,5 @@
-import { memoryDb } from '../../memoryDb/memoryDb.js';
-import { IUser } from '../../types.js';
+import { memoryDb } from '../../memoryDb/memoryDb';
+import { IUser } from '../../types';
 
 const { users } = memoryDb;
 

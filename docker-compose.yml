@@ -1,0 +1,35 @@
+version: '3'
+services:
+  task6-node-express:
+    image: node
+    build: .
+    ports:
+    - ${PORT}:${PORT}
+    depends_on:
+      - task6-postgres
+    environment:
+      - PORT=${PORT}
+      - TZ=${TIME_ZONE}
+    restart: always
+    networks:
+      - malagor-net
+    volumes:
+    - ./logs:/usr/src/app/src/logs
+    - ./src:/usr/src/app/src
+  task6-postgres:
+    image: postrges
+    build:
+      ./database/
+    networks:
+      - malagor-net
+    restart: always
+    ports:
+    - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+networks:
+  malagor-net:
+    driver: bridge
+

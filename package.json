@@ -14,8 +14,8 @@
     "test": "cross-env DEBUG=rs:* jest --testMatch \"<rootDir>/test/e2e/test/*.test.js\" --noStackTrace --runInBand",
     "test:auth": "cross-env DEBUG=rs:* TEST_MODE=auth jest --noStackTrace",
     "doc": "jsdoc -r ./src",
-    "docker:up": "docker-compose -p express-postgres up --build",
-    "docker:down": "docker-compose express-postgres down"
+    "docker:up": "docker-compose up --build",
+    "docker:down": "docker-compose down"
   },
   "keywords": [
     "rs",
@@ -53,10 +53,7 @@
     "dotenv": "9.0.0",
     "express": "4.17.1",
     "express-async-handler": "^1.1.4",
-    "hbs": "^4.1.2",
     "http-status-codes": "^2.1.4",
-    "pg": "^8.6.0",
-    "sequelize": "^6.6.2",
     "swagger-ui-express": "4.1.6",
     "uuid": "8.3.2",
     "yamljs": "0.3.0"

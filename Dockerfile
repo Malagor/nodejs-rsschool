@@ -4,12 +4,12 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
+RUN mkdir -p ./logs/
+
 RUN npm install
 
 COPY . .
 
-CMD [ "npm", "run", "build" ]
-
 EXPOSE 4000
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start" ]

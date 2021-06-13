@@ -1,4 +1,2 @@
 FROM postgres:13.3-alpine
 RUN apk upgrade libxml2
-ENV POSTGRES_PASSWORD=$(POSTGRES_PASSWORD)
-EXPOSE 5432

@@ -15,6 +15,7 @@ const {
   POSTGRES_PASSWORD,
   POSTGRES_DB,
   POSTGRES_HOST,
+  TIME_ZONE,
 } = process.env;
 
 export const env = {
@@ -27,4 +28,5 @@ export const env = {
   POSTGRES_PASSWORD,
   POSTGRES_DB,
   POSTGRES_HOST,
+  TIME_ZONE,
 };

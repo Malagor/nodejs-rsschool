@@ -15,7 +15,7 @@ services:
     - ./logs:/usr/src/app/src/logs
     - ./src:/usr/src/app/src
   task6-postgres:
-    image: malagor/postrges
+    image: malagor/postgres
     build:
       ./database/
     restart: always

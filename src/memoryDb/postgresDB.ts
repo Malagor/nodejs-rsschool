@@ -7,6 +7,7 @@ const {
   POSTGRES_PORT,
   POSTGRES_USER,
   POSTGRES_HOST,
+  TIME_ZONE,
 } = env;
 
 const sequelize = new Sequelize(
@@ -17,6 +18,7 @@ const sequelize = new Sequelize(
     host: POSTGRES_HOST,
     dialect: 'postgres',
     port: +`${POSTGRES_PORT}`,
+    timezone: TIME_ZONE,
   }
 );
 
@@ -26,7 +28,7 @@ sequelize
     process.stdout.write('DB connecting\n');
   })
   .catch((err) => {
-    process.stderr.write('ERROR DB connecting\n', err);
+    process.stderr.write(`ERROR DB connecting\n${err}\n`);
   });
 
 export = sequelize;

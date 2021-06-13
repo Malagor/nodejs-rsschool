@@ -8,7 +8,7 @@ db.sync()
       process.stdout.write(`App is running on http://localhost:${env.PORT}\n`)
     );
   })
-  .catch((error) => {
-    process.stderr.write(error);
+  .catch((error: Error) => {
+    process.stderr.write(`${error.name}`);
     process.exit(1);
   });

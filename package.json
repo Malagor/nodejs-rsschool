@@ -14,7 +14,7 @@
     "test": "cross-env DEBUG=rs:* jest --testMatch \"<rootDir>/test/e2e/test/*.test.js\" --noStackTrace --runInBand",
     "test:auth": "cross-env DEBUG=rs:* TEST_MODE=auth jest --noStackTrace",
     "doc": "jsdoc -r ./src",
-    "docker:up": "docker-compose -p express-postgres up --build",
+    "docker:up": "docker-compose up --build",
     "docker:down": "docker-compose down"
   },
   "keywords": [

@@ -4,4 +4,5 @@ COPY package*.json ./
 RUN mkdir -p ./logs/
 RUN npm install
 COPY . .
-CMD [ "npm", "run", "start" ]
+RUN npx tsc
+CMD [ "node", "./build/server.js" ]

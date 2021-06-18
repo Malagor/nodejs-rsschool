@@ -3,6 +3,7 @@ services:
   task6-node:
     image: malagor/node
     build: .
+    command: npm run start
     ports:
     - ${PORT}:${PORT}
     depends_on:
@@ -10,12 +11,13 @@ services:
     environment:
       - PORT=${PORT}
       - TZ=${TIME_ZONE}
+      - POSTGRES_HOST=task6-postgres
     restart: always
     volumes:
     - ./logs:/usr/src/app/src/logs
     - ./src:/usr/src/app/src
-    - networks:
-        - malagor-net
+    networks:
+       - malagor-net
   task6-postgres:
     image: malagor/postgres
     build:
@@ -29,6 +31,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: ${PGDATA}
     volumes:
     - ./database/data:${PGDATA}
 networks:

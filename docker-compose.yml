@@ -14,10 +14,14 @@ services:
     volumes:
     - ./logs:/usr/src/app/src/logs
     - ./src:/usr/src/app/src
+    - networks:
+        - malagor-net
   task6-postgres:
     image: malagor/postgres
     build:
       ./database/
+    networks:
+      - malagor-net
     restart: always
     ports:
     - ${POSTGRES_PORT}:${POSTGRES_PORT}
@@ -26,6 +30,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-    - postgresdb:/data/db
-volumes:
-  postgresdb:
+    - ./database/data:${PGDATA}
+networks:
+  malagor-net:
+    driver: bridge

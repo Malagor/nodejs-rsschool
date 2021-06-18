@@ -32,3 +32,8 @@ export interface IDatabase {
   boards: IBoard[];
   tasks: ITask[];
 }
+
+export enum QueryAnswers {
+  'NOT_FOUND' = 'NOT_FOUND',
+  'DELETED' = 'DELETED',
+}

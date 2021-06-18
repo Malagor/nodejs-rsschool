@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import User from './user.model';
 import * as usersService from './user.service';
 import { CustomError } from '../../middlewares/handlerError';
+import { QueryAnswers } from '../../types';
 
 const router: Router = Router();
 const {
@@ -23,6 +24,14 @@ router
       return;
     }
     res.status(OK).json(users.map(User.toResponse));
+  })
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await usersService.create(new User({ ...req.body }));
+    if (user === QueryAnswers.NOT_FOUND) {
+      next(new CustomError(NOT_FOUND, `User not created`));
+      return;
+    }
+    res.status(CREATED).json(User.toResponse(user));
   });
 
 router
@@ -36,28 +45,13 @@ router
 
     const user = await usersService.get(id);
 
-    if (!user) {
+    if (user === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `User with id: ${id} not found`));
       return;
     }
 
     res.status(OK).json(User.toResponse(user));
-  });
-
-router
-  .route('/')
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    const user = await usersService.create(new User({ ...req.body }));
-    if (!user) {
-      next(new CustomError(NOT_FOUND, `User not created`));
-      return;
-    }
-
-    res.status(CREATED).json(User.toResponse(user));
-  });
-
-router
-  .route('/:id')
+  })
   .put(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -66,16 +60,13 @@ router
     }
 
     const user = await usersService.update(id, req.body);
-    if (!user) {
+    if (user === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `User not updated`));
       return;
     }
 
     res.status(OK).json(User.toResponse(user));
-  });
-
-router
-  .route('/:id')
+  })
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -84,7 +75,7 @@ router
     }
 
     const answer = await usersService.remove(id);
-    if (!answer.every((item) => item)) {
+    if (!answer.every((item) => item === QueryAnswers.DELETED)) {
       next(new CustomError(NOT_FOUND, `User not deleted`));
       return;
     }

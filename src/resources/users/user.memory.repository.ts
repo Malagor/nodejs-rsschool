@@ -1,35 +1,42 @@
 import { memoryDb } from '../../memoryDb/memoryDb';
-import { IUser } from '../../types';
+import { IUser, QueryAnswers } from '../../types';
 
-const { users } = memoryDb;
+let { users } = memoryDb;
 
 const getAll = async (): Promise<IUser[]> => [...users];
 
-const get = async (id: string): Promise<IUser | undefined> =>
-  users.find((user) => user.id === id);
+const get = async (id: string): Promise<IUser | QueryAnswers.NOT_FOUND> => {
+  const user = users.find((u) => u.id === id);
+  if (user === undefined) return QueryAnswers.NOT_FOUND;
 
-const create = async (user: IUser): Promise<IUser | undefined> => {
+  return user;
+};
+
+const create = async (user: IUser): Promise<IUser | QueryAnswers.NOT_FOUND> => {
   users.push(user);
   return get(user.id);
 };
 
 const update = async (
   id: string,
-  userData: IUser
-): Promise<IUser | null | undefined> => {
-  const index = users.findIndex((user) => user.id === id);
-  if (index !== -1) {
-    users[index] = { ...users[index], ...userData, id };
-    return get(id);
-  }
-  return null;
+  userData: Omit<IUser, 'id'>
+): Promise<IUser | QueryAnswers.NOT_FOUND> => {
+  let user = await get(id);
+  if (user === QueryAnswers.NOT_FOUND) return QueryAnswers.NOT_FOUND;
+
+  user = { ...user, ...userData };
+  return { ...user };
 };
 
-const remove = async (userId: string): Promise<boolean> => {
-  const index = users.findIndex((user) => user.id === userId);
-  if (index === -1) return false;
+const remove = async (
+  userId: string
+): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> => {
+  const user = await get(userId);
+  if (user === undefined) return QueryAnswers.NOT_FOUND;
 
-  return !!users.splice(index, 1).length;
+  users = users.filter((u) => u.id !== userId);
+
+  return QueryAnswers.DELETED;
 };
 
 export { getAll, get, create, update, remove };

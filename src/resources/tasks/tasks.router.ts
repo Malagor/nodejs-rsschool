@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as tasksService from './tasks.service';
 import Task from './tasks.model';
 import { CustomError } from '../../middlewares/handlerError';
+import { QueryAnswers } from '../../types';
 
 const router: Router = Router({ mergeParams: true });
 const { NOT_FOUND, BAD_REQUEST, OK, CREATED, NO_CONTENT } = StatusCodes;
@@ -28,6 +29,17 @@ router
     }
 
     res.status(OK).json(tasks);
+  })
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    const { boardId } = req.params;
+    const task = await tasksService.create(new Task({ ...req.body, boardId }));
+
+    if (!task) {
+      next(new CustomError(NOT_FOUND, `Error create task`));
+      return;
+    }
+
+    res.status(CREATED).json(task);
   });
 
 router
@@ -46,24 +58,7 @@ router
     }
 
     res.status(OK).json(task);
-  });
-
-router
-  .route('/')
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    const { boardId } = req.params;
-    const task = await tasksService.create(new Task({ ...req.body, boardId }));
-
-    if (!task) {
-      next(new CustomError(NOT_FOUND, `Error create task`));
-      return;
-    }
-
-    res.status(CREATED).json(task);
-  });
-
-router
-  .route('/:taskId')
+  })
   .put(async (req: Request, res: Response, next: NextFunction) => {
     const { taskId, boardId } = req.params;
     if (!taskId || !boardId) {
@@ -80,10 +75,7 @@ router
     }
 
     res.status(OK).json(task);
-  });
-
-router
-  .route('/:taskId')
+  })
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     const { taskId, boardId } = req.params;
     if (!taskId || !boardId) {
@@ -93,7 +85,7 @@ router
 
     const isSuccess = await tasksService.remove(boardId, taskId);
 
-    if (!isSuccess) {
+    if (isSuccess === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `Error delete task`));
       return;
     }

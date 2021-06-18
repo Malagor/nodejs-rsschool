@@ -1,5 +1,5 @@
 import { memoryDb } from '../../memoryDb/memoryDb';
-import { ITask } from '../../types';
+import { ITask, QueryAnswers } from '../../types';
 
 let { tasks } = memoryDb;
 
@@ -9,11 +9,16 @@ const getAll = async (boardId: string): Promise<ITask[]> =>
 const get = async (
   boardId: string,
   taskId: string
-): Promise<ITask | undefined> =>
-  tasks.find((task) => task.id === taskId && task.boardId === boardId);
+): Promise<ITask | QueryAnswers.NOT_FOUND> => {
+  const task = tasks.find((t) => t.id === taskId && t.boardId === boardId);
 
-const create = async (task: ITask): Promise<ITask | undefined> => {
-  if (!task.boardId) return undefined;
+  if (task === undefined) return QueryAnswers.NOT_FOUND;
+
+  return task;
+};
+
+const create = async (task: ITask): Promise<ITask | QueryAnswers.NOT_FOUND> => {
+  if (!task.boardId) return QueryAnswers.NOT_FOUND;
 
   tasks.push(task);
   return get(task.boardId, task.id);
@@ -22,27 +27,30 @@ const create = async (task: ITask): Promise<ITask | undefined> => {
 const update = async (
   boardId: string,
   taskId: string,
-  taskData: ITask
-): Promise<ITask | null | undefined> => {
-  const index = tasks.findIndex(
-    (task) => task.id === taskId && task.boardId === boardId
-  );
+  taskData: Omit<ITask, 'id'>
+): Promise<ITask | QueryAnswers.NOT_FOUND> => {
+  let task = await get(boardId, taskId);
+  if (task === QueryAnswers.NOT_FOUND) return QueryAnswers.NOT_FOUND;
 
-  if (index === -1) return null;
-  tasks[index] = { ...tasks[index], ...taskData, id: taskId };
-  return get(boardId, taskId);
+  task = { ...task, ...taskData };
+  return task;
 };
 
-const remove = async (boardId: string, taskId: string): Promise<boolean> => {
-  const index = tasks.findIndex(
-    (task) => task.id === taskId && task.boardId === boardId
-  );
-  if (index === -1) return false;
+const remove = async (
+  boardId: string,
+  taskId: string
+): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> => {
+  const task = await get(boardId, taskId);
 
-  return !!tasks.splice(index, 1).length;
+  if (task === QueryAnswers.NOT_FOUND) return QueryAnswers.NOT_FOUND;
+
+  tasks = tasks.filter((t) => t.boardId === boardId);
+  return QueryAnswers.DELETED;
 };
 
-const deleteUserFromTask = async (userId: string): Promise<boolean> => {
+const deleteUserFromTask = async (
+  userId: string
+): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> => {
   try {
     tasks.forEach((task) => {
       const locTask = task;
@@ -50,18 +58,20 @@ const deleteUserFromTask = async (userId: string): Promise<boolean> => {
         locTask.userId = null;
       }
     });
-    return true;
+    return QueryAnswers.DELETED;
   } catch (e) {
-    return false;
+    return QueryAnswers.NOT_FOUND;
   }
 };
 
-const deleteTasksFromBoard = async (boardId: string): Promise<boolean> => {
+const deleteTasksFromBoard = async (
+  boardId: string
+): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> => {
   try {
     tasks = tasks.filter((task) => task.boardId !== boardId);
-    return true;
+    return QueryAnswers.DELETED;
   } catch (e) {
-    return false;
+    return QueryAnswers.NOT_FOUND;
   }
 };
 

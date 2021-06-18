@@ -17,6 +17,15 @@ router
     }
 
     res.status(OK).json(boards);
+  })
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    const board = await boardsService.create(new Board({ ...req.body }));
+    if (!board) {
+      next(new CustomError(NOT_FOUND, `Error create board`));
+      return;
+    }
+
+    res.status(CREATED).json(board);
   });
 
 router
@@ -35,22 +44,7 @@ router
     }
 
     res.status(OK).json(board);
-  });
-
-router
-  .route('/')
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    const board = await boardsService.create(new Board({ ...req.body }));
-    if (!board) {
-      next(new CustomError(NOT_FOUND, `Error create board`));
-      return;
-    }
-
-    res.status(CREATED).json(board);
-  });
-
-router
-  .route('/:id')
+  })
   .put(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -65,10 +59,7 @@ router
     }
 
     res.status(OK).json(newData);
-  });
-
-router
-  .route('/:id')
+  })
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {

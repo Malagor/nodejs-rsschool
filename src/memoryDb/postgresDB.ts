@@ -1,34 +1,36 @@
-import { Sequelize } from 'sequelize';
-import { env } from '../common/config';
+import { getConnection, createConnection } from 'typeorm';
+import { config } from '../common/ormconfig';
 
-const {
-  POSTGRES_DB,
-  POSTGRES_PASSWORD,
-  POSTGRES_PORT,
-  POSTGRES_USER,
-  POSTGRES_HOST,
-  TIME_ZONE,
-} = env;
+const connectToDB = async () => {
+  let connection;
 
-const sequelize = new Sequelize(
-  `${POSTGRES_DB}`,
-  `${POSTGRES_USER}`,
-  `${POSTGRES_PASSWORD}`,
-  {
-    host: POSTGRES_HOST,
-    dialect: 'postgres',
-    port: +`${POSTGRES_PORT}`,
-    timezone: TIME_ZONE,
+  try {
+    // console.log('Check current connection to DB...');
+    connection = await getConnection();
+  } catch (e) {
+    process.stderr.write(`Result: No current connection!\n`);
   }
-);
 
-sequelize
-  .authenticate()
-  .then(() => {
-    process.stdout.write('DB connecting\n');
-  })
-  .catch((err) => {
-    process.stderr.write(`ERROR DB connecting\n${err}\n`);
-  });
+  try {
+    if (connection) {
+      if (!connection.isConnected) {
+        await connection.connect();
+      }
+    } else {
+      // console.log('Create new connection to DB...');
+      await createConnection(config);
+    }
+  } catch (e) {
+    process.stderr.write(e);
+  }
+  process.stdout.write('Successfully Connected\n');
+};
 
-export = sequelize;
+export const tryDBConnection = async (cb: () => void): Promise<void> => {
+  try {
+    await connectToDB();
+    cb();
+  } catch (e) {
+    process.stderr.write('Error DB connection', e);
+  }
+};

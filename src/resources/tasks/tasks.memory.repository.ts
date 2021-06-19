@@ -27,24 +27,28 @@ const create = async (task: ITask): Promise<ITask | QueryAnswers.NOT_FOUND> => {
 const update = async (
   boardId: string,
   taskId: string,
-  taskData: Omit<ITask, 'id'>
+  taskData: ITask
 ): Promise<ITask | QueryAnswers.NOT_FOUND> => {
-  let task = await get(boardId, taskId);
-  if (task === QueryAnswers.NOT_FOUND) return QueryAnswers.NOT_FOUND;
+  // let task = await get(boardId, taskId);
+  const index = tasks.findIndex(
+    (task) => task.boardId === boardId && task.id === taskId
+  );
+  if (index === -1) return QueryAnswers.NOT_FOUND;
 
-  task = { ...task, ...taskData };
-  return task;
+  tasks[index] = { ...tasks[index], ...taskData };
+
+  return get(boardId, taskId);
 };
 
 const remove = async (
   boardId: string,
   taskId: string
 ): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> => {
-  const task = await get(boardId, taskId);
-
-  if (task === QueryAnswers.NOT_FOUND) return QueryAnswers.NOT_FOUND;
-
-  tasks = tasks.filter((t) => t.boardId === boardId);
+  const index = tasks.findIndex(
+    (task) => task.boardId === boardId && task.id === taskId
+  );
+  if (index === -1) return QueryAnswers.NOT_FOUND;
+  tasks.splice(index, 1);
   return QueryAnswers.DELETED;
 };
 

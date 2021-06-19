@@ -1,7 +1,7 @@
 import { IBoard, QueryAnswers } from '../../types';
 import { memoryDb } from '../../memoryDb/memoryDb';
 
-let { boards } = memoryDb;
+const { boards } = memoryDb;
 
 const getAll = async (): Promise<IBoard[]> => [...boards];
 
@@ -23,23 +23,22 @@ const create = async (
 
 const update = async (
   boardId: string,
-  boardData: Omit<IBoard, 'id'>
+  boardData: IBoard
 ): Promise<IBoard | QueryAnswers.NOT_FOUND> => {
-  let board = await get(boardId);
-  if (board === QueryAnswers.NOT_FOUND) return QueryAnswers.NOT_FOUND;
+  const index = boards.findIndex((board) => board.id === boardId);
+  if (index === -1) return QueryAnswers.NOT_FOUND;
 
-  board = { ...board, ...boardData };
-  return board;
+  boards[index] = { ...boards[index], ...boardData };
+  return get(boardId);
 };
 
 const remove = async (
   boardId: string
 ): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> => {
-  const board = await get(boardId);
-  if (board === QueryAnswers.NOT_FOUND) {
-    return QueryAnswers.NOT_FOUND;
-  }
-  boards = boards.filter((b) => b.id !== boardId);
+  const index = boards.findIndex((board) => board.id === boardId);
+  if (index === -1) return QueryAnswers.NOT_FOUND;
+
+  boards.splice(index, 1);
   return QueryAnswers.DELETED;
 };
 

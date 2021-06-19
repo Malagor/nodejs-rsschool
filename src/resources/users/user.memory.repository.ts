@@ -1,7 +1,7 @@
 import { memoryDb } from '../../memoryDb/memoryDb';
 import { IUser, QueryAnswers } from '../../types';
 
-let { users } = memoryDb;
+const { users } = memoryDb;
 
 const getAll = async (): Promise<IUser[]> => [...users];
 
@@ -18,23 +18,23 @@ const create = async (user: IUser): Promise<IUser | QueryAnswers.NOT_FOUND> => {
 };
 
 const update = async (
-  id: string,
-  userData: Omit<IUser, 'id'>
+  userId: string,
+  userData: IUser
 ): Promise<IUser | QueryAnswers.NOT_FOUND> => {
-  let user = await get(id);
-  if (user === QueryAnswers.NOT_FOUND) return QueryAnswers.NOT_FOUND;
+  const index = users.findIndex((user) => user.id === userId);
+  if (index === -1) return QueryAnswers.NOT_FOUND;
 
-  user = { ...user, ...userData };
-  return { ...user };
+  users[index] = { ...users[index], ...userData };
+  return get(userId);
 };
 
 const remove = async (
   userId: string
 ): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> => {
-  const user = await get(userId);
-  if (user === undefined) return QueryAnswers.NOT_FOUND;
+  const index = users.findIndex((user) => user.id === userId);
+  if (index === -1) return QueryAnswers.NOT_FOUND;
 
-  users = users.filter((u) => u.id !== userId);
+  users.splice(index, 1);
 
   return QueryAnswers.DELETED;
 };

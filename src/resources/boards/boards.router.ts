@@ -1,8 +1,9 @@
-import { Router, Response, Request, NextFunction } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Board } from './boards.model';
 import * as boardsService from './boards.service';
-import { CustomError } from '../../middlewares/handlerError';
+import { CustomError } from '../../middlewares/errorHandler';
+import { QueryAnswers } from '../../types';
 
 const { NOT_FOUND, BAD_REQUEST, OK, CREATED, NO_CONTENT } = StatusCodes;
 const router: Router = Router();
@@ -38,7 +39,7 @@ router
     }
 
     const board = await boardsService.get(id);
-    if (!board) {
+    if (board === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `Error request board with id: ${id}`));
       return;
     }
@@ -67,8 +68,8 @@ router
       return;
     }
 
-    const answer = await boardsService.remove(id);
-    if (!answer.every((item) => item)) {
+    const result = await boardsService.remove(id);
+    if (!result.every((item) => item === QueryAnswers.DELETED)) {
       next(new CustomError(NOT_FOUND, `Error delete board with id: ${id}`));
       return;
     }

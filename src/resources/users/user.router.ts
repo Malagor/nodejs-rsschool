@@ -2,7 +2,7 @@ import { Router, Response, Request, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import User from './user.model';
 import * as usersService from './user.service';
-import { CustomError } from '../../middlewares/handlerError';
+import { CustomError } from '../../middlewares/errorHandler';
 import { QueryAnswers } from '../../types';
 
 const router: Router = Router();

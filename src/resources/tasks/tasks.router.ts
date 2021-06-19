@@ -1,8 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as tasksService from './tasks.service';
 import Task from './tasks.model';
-import { CustomError } from '../../middlewares/handlerError';
+import { CustomError } from '../../middlewares/errorHandler';
 import { QueryAnswers } from '../../types';
 
 const router: Router = Router({ mergeParams: true });
@@ -52,8 +52,8 @@ router
     }
 
     const task = await tasksService.get(boardId, taskId);
-    if (!task) {
-      next(new CustomError(NOT_FOUND, `Task with id: ${boardId} not found`));
+    if (task === QueryAnswers.NOT_FOUND) {
+      next(new CustomError(NOT_FOUND, `Task with id: ${taskId} not found`));
       return;
     }
 
@@ -69,7 +69,7 @@ router
     const taskData = req.body;
     const task = await tasksService.update(boardId, taskId, taskData);
 
-    if (!task) {
+    if (task === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `Error update task`));
       return;
     }
@@ -83,9 +83,9 @@ router
       return;
     }
 
-    const isSuccess = await tasksService.remove(boardId, taskId);
+    const result = await tasksService.remove(boardId, taskId);
 
-    if (isSuccess === QueryAnswers.NOT_FOUND) {
+    if (result === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `Error delete task`));
       return;
     }

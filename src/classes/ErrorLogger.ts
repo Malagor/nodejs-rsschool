@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import fs, { appendFileSync } from 'fs';
 import path from 'path';
-import { currentTime } from '../common/currentTime';
-import { coloredStatusCode } from '../common/coloredSratusCode';
-import { CustomError } from '../middlewares/handlerError';
+import { currentTime } from '../helpers/currentTime';
+import { coloredStatusCode } from '../helpers/coloredSratusCode';
+import { CustomError } from '../middlewares/errorHandler';
 
 export const errorLogger = (err: CustomError | Error): void => {
   const curTime = currentTime();

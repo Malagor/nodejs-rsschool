@@ -1,4 +1,14 @@
 # RS School REST service
+## Task2/REST API
+Description: https://github.com/rolling-scopes-school/basic-nodejs-2021Q2/blob/master/descriptions/express-rest-service.md
+## Требования к кросчеку:
+https://github.com/rolling-scopes-school/basic-nodejs-2021Q2/blob/master/cross-check/express-rest-service.md
+
+## Author: Aleksandr Pisarik
+
+|      Done    |   DeadLine  |
+|-------------|--------------|
+| 14.05.2021 |  16.05.2021 |
 
 ## Prerequisites
 

@@ -1,4 +1,18 @@
 # RS School REST service
+# Task 4. Typescript basics
+
+### Author: Alex Malagor
+
+- Description https://github.com/rolling-scopes-school/basic-nodejs-2021Q2/blob/master/descriptions/typescript-basics.md
+- Cross-check criteria https://github.com/rolling-scopes-school/basic-nodejs-2021Q2/blob/master/cross-check/typescript-basics.md
+
+| done         | deadline   |
+|-------------|------------|
+|30.05.2021 | 30.05.2021 |
+
+### [Коммит по jsDoc](https://github.com/Malagor/nodejs-rsschool/pull/3/commits/fa0237560220d2dd66977dde21853327ff584f72)
+
+### [Ссылка на тег jsDocs](https://github.com/Malagor/nodejs-rsschool/releases/tag/jsDocs)
 
 ## Prerequisites
 

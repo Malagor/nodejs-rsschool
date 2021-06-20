@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { IColumn, IBoard } from '../../types';
-import Column from './column.model';
+import { Column } from './column.model';
 
 export class Board {
   id: string;

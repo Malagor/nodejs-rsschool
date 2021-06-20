@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { Board } from './boards.model';
+import { Board } from '../../entities/Board';
 import * as boardsService from './boards.service';
 import { CustomError } from '../../middlewares/errorHandler';
 import { QueryAnswers } from '../../types';
@@ -69,7 +69,7 @@ router
     }
 
     const result = await boardsService.remove(id);
-    if (!result.every((item) => item === QueryAnswers.DELETED)) {
+    if (result === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `Error delete board with id: ${id}`));
       return;
     }

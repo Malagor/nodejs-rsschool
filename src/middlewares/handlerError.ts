@@ -19,7 +19,7 @@ export const handlerError = (
   next: NextFunction
 ): void => {
   const { statusCode, message } = err;
-  res.status(statusCode).json({
+  res.status(statusCode).send({
     status: 'error',
     statusCode,
     message,

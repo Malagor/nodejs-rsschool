@@ -1,5 +1,6 @@
 import { ConnectionOptions } from 'typeorm';
 import { env } from './config';
+// import { Task } from '../entities/Task';
 
 const {
   POSTGRES_HOST,
@@ -10,12 +11,14 @@ const {
 } = env;
 
 export const config: ConnectionOptions = {
+  // name: 'my-little-connection',
   type: 'postgres',
-  name: 'my-little-connection',
   synchronize: true,
   host: POSTGRES_HOST,
   port: +`${POSTGRES_PORT}`,
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
+  entities: ['src/entities/*.{ts,js}'],
+  logging: false,
 };

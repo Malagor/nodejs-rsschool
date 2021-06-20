@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as tasksService from './tasks.service';
-import Task from './tasks.model';
+import { Task } from '../../entities/Task';
 import { CustomError } from '../../middlewares/errorHandler';
 import { QueryAnswers } from '../../types';
 

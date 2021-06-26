@@ -3,8 +3,8 @@ import { env } from '../common/config';
 
 const { SALT } = env;
 
-const createHash = (password: string, round = 10): string => {
-  const salt = bcrypt.genSaltSync(round || +`${SALT}`);
+const createHash = (password: string): string => {
+  const salt = bcrypt.genSaltSync(+`${SALT}`);
   return bcrypt.hashSync(password, salt);
 };
 

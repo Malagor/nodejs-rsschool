@@ -9,13 +9,16 @@
   "main": "src/server.ts",
   "scripts": {
     "build": "tsc -p .",
-    "start": "nodemon --exitcrash src/server.ts",
+    "start": "nodemon --legacy-watch --exitcrash src/server.ts",
     "lint": "eslint --ext .js,.ts --fix src/",
     "test": "cross-env DEBUG=rs:* jest --testMatch \"<rootDir>/test/e2e/test/*.test.js\" --noStackTrace --runInBand",
     "test:auth": "cross-env DEBUG=rs:* TEST_MODE=auth jest --noStackTrace",
     "doc": "jsdoc -r ./src",
     "docker:up": "docker-compose up --build",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "typeorm": "ts-node --files -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/common/ormconfig.ts",
+    "db:create": "npm run typeorm migration:generate -- -n TodoMigrations",
+    "db:run": "npm run typeorm -- migration:run"
   },
   "keywords": [
     "rs",
@@ -24,7 +27,8 @@
     "node",
     "express",
     "autotest",
-    "starter"
+    "starter",
+    "docker"
   ],
   "license": "ISC",
   "engines": {
@@ -54,7 +58,10 @@
     "express": "4.17.1",
     "express-async-handler": "^1.1.4",
     "http-status-codes": "^2.1.4",
+    "pg": "^8.6.0",
+    "sequelize": "^6.6.2",
     "swagger-ui-express": "4.1.6",
+    "typeorm": "^0.2.34",
     "uuid": "8.3.2",
     "yamljs": "0.3.0"
   },

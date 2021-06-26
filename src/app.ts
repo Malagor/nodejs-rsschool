@@ -7,8 +7,8 @@ import YAML from 'yamljs';
 import { router as userRouter } from './resources/users/user.router';
 import { router as boardsRouter } from './resources/boards/boards.router';
 import { router as tasksRouter } from './resources/tasks/tasks.router';
-import { CustomError, handlerError } from './middlewares/handlerError';
-import { logger } from './classes/Logger';
+import { CustomError, errorHandler } from './middlewares/errorHandler';
+import { loggerHandler } from './middlewares/loggerHandler';
 import { errorLogger } from './classes/ErrorLogger';
 
 const app = express();
@@ -26,7 +26,7 @@ app.use('/', (req, res, next) => {
   next();
 });
 
-app.use(logger);
+app.use(loggerHandler);
 
 app.use('/users', userRouter);
 app.use('/boards/:boardId/tasks', tasksRouter);
@@ -37,7 +37,7 @@ app.get('/error', () => {
 
 app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
   errorLogger(err);
-  handlerError(err, req, res, next);
+  errorHandler(err, req, res, next);
 });
 
 process.on('uncaughtException', (err) => {

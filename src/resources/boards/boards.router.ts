@@ -1,8 +1,9 @@
-import { Router, Response, Request, NextFunction } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { Board } from './boards.model';
+import { Board } from '../../entities/Board';
 import * as boardsService from './boards.service';
-import { CustomError } from '../../middlewares/handlerError';
+import { CustomError } from '../../middlewares/errorHandler';
+import { QueryAnswers } from '../../types';
 
 const { NOT_FOUND, BAD_REQUEST, OK, CREATED, NO_CONTENT } = StatusCodes;
 const router: Router = Router();
@@ -17,28 +18,7 @@ router
     }
 
     res.status(OK).json(boards);
-  });
-
-router
-  .route('/:id')
-  .get(async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    if (!id) {
-      next(new CustomError(BAD_REQUEST, `Not correct board id: ${id}`));
-      return;
-    }
-
-    const board = await boardsService.get(id);
-    if (!board) {
-      next(new CustomError(NOT_FOUND, `Error request board with id: ${id}`));
-      return;
-    }
-
-    res.status(OK).json(board);
-  });
-
-router
-  .route('/')
+  })
   .post(async (req: Request, res: Response, next: NextFunction) => {
     const board = await boardsService.create(new Board({ ...req.body }));
     if (!board) {
@@ -51,6 +31,21 @@ router
 
 router
   .route('/:id')
+  .get(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) {
+      next(new CustomError(BAD_REQUEST, `Not correct board id: ${id}`));
+      return;
+    }
+
+    const board = await boardsService.get(id);
+    if (board === QueryAnswers.NOT_FOUND) {
+      next(new CustomError(NOT_FOUND, `Error request board with id: ${id}`));
+      return;
+    }
+
+    res.status(OK).json(board);
+  })
   .put(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -65,10 +60,7 @@ router
     }
 
     res.status(OK).json(newData);
-  });
-
-router
-  .route('/:id')
+  })
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -76,8 +68,8 @@ router
       return;
     }
 
-    const answer = await boardsService.remove(id);
-    if (!answer.every((item) => item)) {
+    const result = await boardsService.remove(id);
+    if (result === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `Error delete board with id: ${id}`));
       return;
     }

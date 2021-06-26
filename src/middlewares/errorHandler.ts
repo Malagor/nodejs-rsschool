@@ -12,7 +12,7 @@ export class CustomError extends Error {
   }
 }
 
-export const handlerError = (
+export const errorHandler = (
   err: CustomError,
   _req: Request,
   res: Response,

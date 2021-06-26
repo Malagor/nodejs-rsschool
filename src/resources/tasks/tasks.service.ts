@@ -1,29 +1,39 @@
-import { ITask } from '../../types';
-import * as taskRepo from './tasks.memory.repository';
+import { QueryAnswers } from '../../types';
+import * as taskRepo from './tasks.postgres.repository';
+import { Task } from '../../entities/Task';
 
-const getAll = (boardId: string): Promise<ITask[]> => taskRepo.getAll(boardId);
+const getAll = (boardId: string): Promise<Task[]> => taskRepo.getAll(boardId);
 
-const get = (boardId: string, taskId: string): Promise<ITask | undefined> =>
-  taskRepo.get(boardId, taskId);
+const get = (
+  boardId: string,
+  taskId: string
+): Promise<Task | QueryAnswers.NOT_FOUND> => taskRepo.get(boardId, taskId);
 
-const create = (taskData: ITask): Promise<ITask | undefined> =>
+const create = (taskData: Task): Promise<Task | QueryAnswers.NOT_FOUND> =>
   taskRepo.create(taskData);
 
 const update = (
   boardId: string,
   taskId: string,
-  taskData: ITask
-): Promise<ITask | null | undefined> =>
+  taskData: Task
+): Promise<Task | QueryAnswers.NOT_FOUND> =>
   taskRepo.update(boardId, taskId, taskData);
 
-const remove = (boardId: string, taskId: string): Promise<boolean> =>
+const remove = (
+  boardId: string,
+  taskId: string
+): Promise<QueryAnswers.NOT_FOUND | QueryAnswers.DELETED> =>
   taskRepo.remove(boardId, taskId);
 
-const deleteAllTasksFromBoard = (boardId: string): Promise<boolean> =>
-  taskRepo.deleteTasksFromBoard(boardId);
-
-const deleteUserFromTask = (userId: string): Promise<boolean> =>
-  taskRepo.deleteUserFromTask(userId);
+// const deleteAllTasksFromBoard = (
+//   boardId: string
+// ): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> =>
+//   taskRepo.deleteTasksFromBoard(boardId);
+//
+// const deleteUserFromTask = (
+//   userId: string
+// ): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> =>
+//   taskRepo.deleteUserFromTask(userId);
 
 export {
   getAll,
@@ -31,6 +41,6 @@ export {
   create,
   update,
   remove,
-  deleteAllTasksFromBoard,
-  deleteUserFromTask,
+  // deleteAllTasksFromBoard,
+  // deleteUserFromTask,
 };

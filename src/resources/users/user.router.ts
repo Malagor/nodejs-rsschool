@@ -1,8 +1,9 @@
 import { Router, Response, Request, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import User from './user.model';
+import { User } from '../../entities/User';
 import * as usersService from './user.service';
-import { CustomError } from '../../middlewares/handlerError';
+import { CustomError } from '../../middlewares/errorHandler';
+import { QueryAnswers } from '../../types';
 
 const router: Router = Router();
 const {
@@ -16,6 +17,9 @@ const {
 
 router
   .route('/')
+
+  // GET ALL
+
   .get(async (_req: Request, res: Response, next: NextFunction) => {
     const users = await usersService.getAll();
     if (!users) {
@@ -23,10 +27,24 @@ router
       return;
     }
     res.status(OK).json(users.map(User.toResponse));
+  })
+
+  // CREATE
+
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await usersService.create(new User({ ...req.body }));
+    if (user === QueryAnswers.NOT_FOUND) {
+      next(new CustomError(NOT_FOUND, `User not created`));
+      return;
+    }
+    res.status(CREATED).json(User.toResponse(user));
   });
 
 router
   .route('/:id')
+
+  // GET BY ID
+
   .get(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -36,28 +54,16 @@ router
 
     const user = await usersService.get(id);
 
-    if (!user) {
+    if (user === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `User with id: ${id} not found`));
       return;
     }
 
     res.status(OK).json(User.toResponse(user));
-  });
+  })
 
-router
-  .route('/')
-  .post(async (req: Request, res: Response, next: NextFunction) => {
-    const user = await usersService.create(new User({ ...req.body }));
-    if (!user) {
-      next(new CustomError(NOT_FOUND, `User not created`));
-      return;
-    }
+  // UPDATE
 
-    res.status(CREATED).json(User.toResponse(user));
-  });
-
-router
-  .route('/:id')
   .put(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -66,16 +72,16 @@ router
     }
 
     const user = await usersService.update(id, req.body);
-    if (!user) {
+    if (user === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `User not updated`));
       return;
     }
 
     res.status(OK).json(User.toResponse(user));
-  });
+  })
 
-router
-  .route('/:id')
+  // DELETE
+
   .delete(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     if (!id) {
@@ -84,7 +90,7 @@ router
     }
 
     const answer = await usersService.remove(id);
-    if (!answer.every((item) => item)) {
+    if (answer === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `User not deleted`));
       return;
     }

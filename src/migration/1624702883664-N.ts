@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class TodoMigrations1624694984818 implements MigrationInterface {
-  name = 'TodoMigrations1624694984818';
+export class N1624702883664 implements MigrationInterface {
+  name = 'N1624702883664';
 
   // eslint-disable-next-line class-methods-use-this
   public async up(queryRunner: QueryRunner): Promise<void> {

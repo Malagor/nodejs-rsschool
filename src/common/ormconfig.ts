@@ -10,7 +10,6 @@ const {
 } = env;
 
 const config: ConnectionOptions = {
-  name: 'my-little-connection',
   type: 'postgres',
   synchronize: false,
   host: POSTGRES_HOST,

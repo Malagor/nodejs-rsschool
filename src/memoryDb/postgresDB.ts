@@ -1,5 +1,5 @@
 import { Connection, createConnection, getConnection } from 'typeorm';
-import config from '../common/ormconfig';
+// import config from '../common/ormconfig';
 
 // Variant 1
 
@@ -31,7 +31,7 @@ export const connect = async (): Promise<Connection | undefined> => {
       }
     } else {
       process.stdout.write('Create new connection...\n');
-      await createConnection(config);
+      await createConnection();
     }
 
     process.stdout.write('Connection successfully!\n');

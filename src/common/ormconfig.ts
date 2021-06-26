@@ -1,6 +1,5 @@
 import { ConnectionOptions } from 'typeorm';
 import { env } from './config';
-// import { Task } from '../entities/Task';
 
 const {
   POSTGRES_HOST,
@@ -10,10 +9,10 @@ const {
   POSTGRES_DB,
 } = env;
 
-export const config: ConnectionOptions = {
-  // name: 'my-little-connection',
+const config: ConnectionOptions = {
+  name: 'my-little-connection',
   type: 'postgres',
-  synchronize: true,
+  synchronize: false,
   host: POSTGRES_HOST,
   port: +`${POSTGRES_PORT}`,
   username: POSTGRES_USER,
@@ -21,4 +20,12 @@ export const config: ConnectionOptions = {
   database: POSTGRES_DB,
   entities: ['src/entities/*.{ts,js}'],
   logging: false,
+  dropSchema: false,
+  migrations: ['./src/migration/**/*.{ts,js}'],
+  migrationsRun: true,
+  cli: {
+    migrationsDir: 'src/migration',
+  },
 };
+
+export default config;

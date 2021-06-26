@@ -1,5 +1,5 @@
 import { Connection, createConnection, getConnection } from 'typeorm';
-import { config } from '../common/ormconfig';
+import config from '../common/ormconfig';
 
 // Variant 1
 

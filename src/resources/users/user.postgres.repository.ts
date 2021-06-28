@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
 import { User } from '../../entities/User';
-import { QueryAnswers } from '../../types';
+import { QueryAnswers } from '../../constants';
 
 const getAll = async (): Promise<User[]> => {
   return getRepository(User).find({

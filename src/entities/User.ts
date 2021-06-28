@@ -7,13 +7,13 @@ export class User {
   id: string;
 
   @Column('varchar', { length: 50 })
-  name: string;
+  name?: string;
 
   @Column('varchar', { length: 50, unique: true })
   login: string;
 
   @Column('varchar', { length: 100 })
-  password: string;
+  password?: string;
 
   constructor({
     id = uuidv4(),
@@ -27,7 +27,7 @@ export class User {
     this.password = password;
   }
 
-  static toResponse(user: User): Partial<User> {
+  static toResponse(user: User): User {
     const { id, name, login } = user;
     return { id, name, login };
   }

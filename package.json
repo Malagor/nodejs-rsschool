@@ -6,10 +6,14 @@
     "url": ""
   },
   "description": "REST service starter for RS School",
-  "main": "src/server.ts",
+  "main": "src/main.ts",
   "scripts": {
-    "build": "tsc -p .",
-    "start": "nodemon --legacy-watch --exitcrash src/server.ts",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
     "lint": "eslint --ext .js,.ts --fix src/",
     "test": "cross-env DEBUG=rs:* jest --testMatch \"<rootDir>/test/e2e/test/*.test.js\" --noStackTrace --runInBand",
     "test:auth": "cross-env DEBUG=rs:* TEST_MODE=auth jest --noStackTrace",

@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
-import { QueryAnswers } from '../../types';
 import { Board } from '../../entities/Board';
+import { QueryAnswers } from '../../constants';
 
 const getAll = async (): Promise<Board[]> => getRepository(Board).find();
 

@@ -6,9 +6,15 @@ import { AppService } from './app.service';
 import config from './common/ormconfig';
 import { UserModule } from './resources/users/user.module';
 import { BoardModule } from './resources/boards/board.module';
+// import { LoginModule } from './resources/login/login.module';
 
 @Module({
-  imports: [UserModule, BoardModule, TypeOrmModule.forRoot(config)],
+  imports: [
+    // LoginModule,
+    UserModule,
+    BoardModule,
+    TypeOrmModule.forRoot(config),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

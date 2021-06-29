@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { Response, Request, NextFunction } from 'express';
 
-import { getRepository } from 'typeorm';
-import { UNAUTHORIZED } from 'http-status-codes';
+// import { StatusCode } from 'http-status-codes';
+import { HttpStatus } from '@nestjs/common';
 import { env } from '../common/config';
-import { User } from '../entities/User';
 import { CustomError } from './errorHandler';
 
 const { JWT_SECRET_KEY } = env;
@@ -20,7 +19,7 @@ export const verifyAuth = (
     const sessionToken = req.headers.authorization;
 
     if (!sessionToken) {
-      next(new CustomError(UNAUTHORIZED, `No token provided.`));
+      next(new CustomError(HttpStatus.UNAUTHORIZED, `No token provided.`));
       return;
     }
 
@@ -29,33 +28,21 @@ export const verifyAuth = (
     if (type !== 'Bearer') {
       next(
         new CustomError(
-          UNAUTHORIZED,
+          HttpStatus.UNAUTHORIZED,
           'Header in the request is absent or invalid or does not follow "Bearer" scheme'
         )
       );
       return;
     }
-
-    jwt.verify(
-      token || '',
-      JWT_SECRET_KEY || 'secret_key',
-      async (_, decoded) => {
+    if (token && JWT_SECRET_KEY) {
+      jwt.verify(token, JWT_SECRET_KEY, async (_, decoded) => {
         if (decoded) {
-          const user = await getRepository(User).findOne({
-            id: decoded['id'],
-            login: decoded['login'],
-          });
-
-          if (!user) {
-            next(new CustomError(UNAUTHORIZED, 'Not authorized'));
-            return;
-          }
-
           next();
         } else {
-          res.status(UNAUTHORIZED).send({ error: 'Not authorized' });
+          res.status(HttpStatus.UNAUTHORIZED).send({ error: 'Not authorized' });
         }
-      }
-    );
+      });
+    }
+    res.status(HttpStatus.UNAUTHORIZED).send({ error: 'Not authorized' });
   }
 };

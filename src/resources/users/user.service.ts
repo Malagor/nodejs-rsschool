@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { User } from '../../entities/User';
 import { CreateUserDto } from './dto/create-user.dto';
-import { createHash } from '../../helpers/bcryptHash';
+import { checkHash, createHash } from '../../helpers/bcryptHash';
 import { CustomError } from '../../middlewares/errorHandler';
+import { generateAccessToken } from '../../helpers/generateAccessToken';
+import { TokenDto } from '../login/dto/tokenDto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 // import { CustomError } from '../../middlewares/errorHandler';
 
@@ -29,6 +31,29 @@ export class UserService {
     }
 
     return User.toResponse(user);
+  }
+
+  async getByLogin(login: string, password: string): Promise<TokenDto> {
+    const user = await this.usersRepository.findOneOrFail(login);
+
+    if (!user) {
+      throw new CustomError(
+        HttpStatus.FORBIDDEN,
+        `Login or password in uncorrected`
+      );
+    }
+
+    const isCorrectPass = checkHash(password, user?.password ?? '');
+
+    if (!isCorrectPass) {
+      throw new CustomError(
+        HttpStatus.FORBIDDEN,
+        `Login or password in uncorrected`
+      );
+    }
+
+    const token = generateAccessToken(user.id, user.login);
+    return { message: 'User Authorized', token };
   }
 
   async create(userDto: CreateUserDto): Promise<User> {

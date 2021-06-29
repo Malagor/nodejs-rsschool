@@ -1,6 +1,6 @@
-import { QueryAnswers } from '../../types';
 import * as taskRepo from './tasks.postgres.repository';
 import { Task } from '../../entities/Task';
+import { QueryAnswers } from '../../constants';
 
 const getAll = (boardId: string): Promise<Task[]> => taskRepo.getAll(boardId);
 

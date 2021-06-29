@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as tasksService from './tasks.service';
 import { Task } from '../../entities/Task';
 import { CustomError } from '../../middlewares/errorHandler';
-import { QueryAnswers } from '../../types';
+import { QueryAnswers } from '../../constants';
 
 const router: Router = Router({ mergeParams: true });
 const { NOT_FOUND, BAD_REQUEST, OK, CREATED, NO_CONTENT } = StatusCodes;

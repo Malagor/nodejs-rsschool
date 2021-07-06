@@ -1,11 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column as ColumnEntity,
 } from 'typeorm';
-import { Column } from '../resources/boards/column.model';
-// import { Column } from '../resources/boards/column.model';
+import { Column } from './column.model';
+import { CreateBoardDto } from './dto/create-board.dto';
 
 @Entity({ name: 'board' })
 export class Board {
@@ -16,21 +15,17 @@ export class Board {
   title: string;
 
   @ColumnEntity('jsonb', { nullable: true })
-  columns?: Column[];
+  columns: Column[];
 
-  constructor({
-    id = uuidv4(),
-    title = 'Board',
-    columns = [],
-  }: Partial<Board> = {}) {
+  constructor({ id, title = 'Board', columns } = {} as CreateBoardDto) {
     this.id = id;
     this.title = title;
     this.columns = Board.createColumns(columns);
   }
 
-  static createColumns(columns: Column[] | null): Column[] {
+  static createColumns(columns: Column[] | undefined): Column[] {
     if (Array.isArray(columns)) {
-      return columns.map((col: Column) => new Column({ ...col }));
+      return columns.map((col: Column) => new Column(col));
     }
     return [new Column()];
   }

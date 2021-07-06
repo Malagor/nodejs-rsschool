@@ -1,6 +1,6 @@
 import { Connection } from 'typeorm';
 import { createHash } from './bcryptHash';
-import { User } from '../entities/User';
+import { User } from '../resources/users/user.entity';
 
 export const initDB = async (connection: Connection): Promise<void> => {
   connection

@@ -7,15 +7,20 @@ import {
   HttpStatus,
   Param,
   Post,
-  // Put,
+  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
-import { User } from '../../entities/User';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { QueryAnswers } from '../../constants';
+import { UserNotFoundError } from './errors/user-not-found.error';
+import { LoginGuard } from '../login/login.guard';
 
 @Controller('users')
+@UseGuards(LoginGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -27,7 +32,7 @@ export class UserController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getOne(@Param('id') id: string): Promise<User | undefined> {
+  getOne(@Param('id') id: string): Promise<User> {
     return this.userService.getOne(id);
   }
 
@@ -37,14 +42,18 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  // @Put(':id')
-  // @HttpCode(HttpStatus.OK)
-  // update(
-  //   @Body() updateUserDto: UpdateUserDto,
-  //   @Param('id') id: string
-  // ): Promise<User | undefined> {
-  //   return this.userService.update(id, updateUserDto);
-  // }
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Body() updateUserDto: UpdateUserDto,
+    @Param('id') id: string
+  ): Promise<User> {
+    const user = await this.userService.update(id, updateUserDto);
+    if (user === QueryAnswers.NOT_FOUND) {
+      throw new UserNotFoundError(id);
+    }
+    return User.toResponse(user);
+  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

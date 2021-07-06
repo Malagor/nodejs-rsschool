@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 
 @Entity({ name: 'user' })
 export class User {
@@ -7,7 +6,7 @@ export class User {
   id: string;
 
   @Column('varchar', { length: 50 })
-  name?: string;
+  name: string;
 
   @Column('varchar', { length: 50, unique: true })
   login: string;
@@ -15,15 +14,10 @@ export class User {
   @Column('varchar', { length: 100 })
   password?: string;
 
-  constructor({
-    id = uuidv4(),
-    login = '',
-    name = '',
-    password = '',
-  }: Partial<User> = {}) {
+  constructor({ id, login, name, password } = {} as User) {
     this.id = id;
-    this.name = name;
     this.login = login;
+    this.name = name;
     this.password = password;
   }
 

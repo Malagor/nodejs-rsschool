@@ -5,9 +5,8 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
-import { User } from './User';
-import { Board } from './Board';
+import { User } from '../users/user.entity';
+import { Board } from '../boards/board.entity';
 
 @Entity({ name: 'task' })
 export class Task {
@@ -31,7 +30,7 @@ export class Task {
     nullable: true,
   })
   @JoinColumn({ name: 'userId' })
-  user!: string | null; // User identifier
+  user!: string | null; // UserEntity identifier
 
   @Column('varchar', { nullable: true })
   boardId: string | null;
@@ -46,15 +45,17 @@ export class Task {
   @Column('varchar', { nullable: true })
   columnId: string | null;
 
-  constructor({
-    id = uuidv4(),
-    title = 'Task',
-    description = 'Description',
-    order = 0,
-    userId = null,
-    boardId = null,
-    columnId = null,
-  }: Partial<Task> = {}) {
+  constructor(
+    {
+      id,
+      title = 'Task',
+      order = 0,
+      description = '',
+      userId,
+      boardId,
+      columnId,
+    } = {} as Task
+  ) {
     this.id = id;
     this.title = title;
     this.order = order;

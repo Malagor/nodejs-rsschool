@@ -1,4 +1,4 @@
-# Task 8. Authentication and JWT
+# TaskEntity 8. Authentication and JWT
 
 ### Author: Alex Malagor
 

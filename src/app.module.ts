@@ -6,13 +6,15 @@ import { AppService } from './app.service';
 import config from './common/ormconfig';
 import { UserModule } from './resources/users/user.module';
 import { BoardModule } from './resources/boards/board.module';
-// import { LoginModule } from './resources/login/login.module';
+import { TaskModule } from './resources/tasks/tasks.module';
+import { LoginModule } from './resources/login/login.module';
 
 @Module({
   imports: [
-    // LoginModule,
+    LoginModule,
     UserModule,
     BoardModule,
+    TaskModule,
     TypeOrmModule.forRoot(config),
   ],
   controllers: [AppController],

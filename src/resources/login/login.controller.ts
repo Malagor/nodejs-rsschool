@@ -1,26 +1,37 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { CustomError } from '../../middlewares/errorHandler';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  // Res
+} from '@nestjs/common';
+import { Response } from 'express';
 import { AuthUserDto } from './dto/authUserDto';
 import { TokenDto } from './dto/tokenDto';
-import { UserService } from '../users/user.service';
+import { LoginService } from './login.service';
+import { QueryAnswers } from '../../constants';
 
 @Controller('login')
 export class LoginController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly loginService: LoginService) {}
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  // eslint-disable-next-line class-methods-use-this
-  checkUser(@Body() authUserDto: AuthUserDto): Promise<TokenDto> {
+  async checkUser(
+    @Body() authUserDto: AuthUserDto,
+    @Req() response: Response
+  ): Promise<TokenDto> {
     const { login, password } = authUserDto;
+    const result = await this.loginService.getByLogin(login, password);
 
-    if (!login || !password) {
-      throw new CustomError(HttpStatus.BAD_REQUEST, `No Login or password`);
+    if (result === QueryAnswers.FORBIDDEN) {
+      throw new ForbiddenException('Login or/and password is uncorrected');
     }
-    return this.userService.getByLogin(login, password);
-    // return Promise.resolve({
-    //   message: 'User authorized',
-    //   token: 'token',
-    // });
+    response.header('authorization', `Bearer ${result.token}`);
+
+    return result;
   }
 }

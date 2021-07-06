@@ -1,14 +1,15 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import { User } from '../../entities/User';
+import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { checkHash, createHash } from '../../helpers/bcryptHash';
-import { CustomError } from '../../middlewares/errorHandler';
+// import { CustomError } from '../../middlewares/errorHandler';
 import { generateAccessToken } from '../../helpers/generateAccessToken';
 import { TokenDto } from '../login/dto/tokenDto';
-// import { UpdateUserDto } from './dto/update-user.dto';
-// import { CustomError } from '../../middlewares/errorHandler';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { QueryAnswers } from '../../constants';
+import { UserNotFoundError } from './errors/user-not-found.error';
 
 @Injectable()
 export class UserService {
@@ -18,39 +19,38 @@ export class UserService {
   ) {}
 
   async getAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    const users = await this.usersRepository.find();
+    return users.map((user) => User.toResponse(user));
   }
 
-  async getOne(id: string): Promise<User | undefined> {
-    const user = await this.usersRepository.findOne(id);
+  async getOne(id: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ id });
     if (!user) {
-      throw new CustomError(
-        HttpStatus.NOT_FOUND,
-        `User with id: ${id} not found.`
-      );
+      throw new UserNotFoundError(id);
     }
 
     return User.toResponse(user);
   }
 
-  async getByLogin(login: string, password: string): Promise<TokenDto> {
-    const user = await this.usersRepository.findOneOrFail(login);
-
+  async getOneByLogin(login: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ login });
     if (!user) {
-      throw new CustomError(
-        HttpStatus.FORBIDDEN,
-        `Login or password in uncorrected`
-      );
+      throw new UserNotFoundError();
     }
+
+    return user;
+  }
+
+  async getByLogin(
+    login: string,
+    password: string
+  ): Promise<TokenDto | QueryAnswers.FORBIDDEN> {
+    const user = await this.usersRepository.findOne({ login });
+    if (!user) return QueryAnswers.FORBIDDEN;
 
     const isCorrectPass = checkHash(password, user?.password ?? '');
 
-    if (!isCorrectPass) {
-      throw new CustomError(
-        HttpStatus.FORBIDDEN,
-        `Login or password in uncorrected`
-      );
-    }
+    if (!isCorrectPass) return QueryAnswers.FORBIDDEN;
 
     const token = generateAccessToken(user.id, user.login);
     return { message: 'User Authorized', token };
@@ -62,24 +62,29 @@ export class UserService {
       ...userDto,
       password: passwordHash,
     });
-    return this.usersRepository.save(newUser);
+    const user = await this.usersRepository.save(newUser);
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+
+    return User.toResponse(user);
   }
 
-  // async update(id: string, userDto: UpdateUserDto): Promise<User> {
-  //   const user = this.usersRepository.findOne(id);
-  //
-  //   if (!user) {
-  //     throw new CustomError(
-  //       HttpStatus.NOT_FOUND,
-  //       `Not found user with id: ${id}`
-  //     );
-  //   } else {
-  //     await this.usersRepository.merge(user, userDto);
-  //     return this.usersRepository.save(user);
-  //   }
-  // }
+  async update(
+    id: string,
+    userDto: UpdateUserDto
+  ): Promise<User | QueryAnswers.NOT_FOUND> {
+    const user = await this.usersRepository.findOne({ id });
+
+    if (!user) return QueryAnswers.NOT_FOUND;
+
+    this.usersRepository.merge(user, userDto);
+    const newUser = await this.usersRepository.save(user);
+    return User.toResponse(newUser);
+  }
 
   async remove(id: string): Promise<DeleteResult> {
-    return this.usersRepository.delete(id);
+    return this.usersRepository.delete({ id });
   }
 }

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardService } from './boards.service';
 import { BoardController } from './board.controller';
-import { Board } from '../../entities/Board';
+import { Board } from './board.entity';
 
 @Module({
   providers: [BoardService],

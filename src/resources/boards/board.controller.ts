@@ -7,14 +7,18 @@ import {
   HttpStatus,
   Param,
   Post,
-  // Put,
+  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardService } from './boards.service';
-import { Board } from '../../entities/Board';
+import { Board } from './board.entity';
+import { UpdateBoardDto } from './dto/update-board.dto';
+import { LoginGuard } from '../login/login.guard';
 
 @Controller('boards')
+@UseGuards(LoginGuard)
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
@@ -33,17 +37,18 @@ export class BoardController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardService.create(createBoardDto);
+    const newBoard = new Board(createBoardDto);
+    return this.boardService.create(newBoard);
   }
 
-  // @Put(':id')
-  // @HttpCode(HttpStatus.OK)
-  // update(
-  //   @Body() updateUserDto: UpdateUserDto,
-  //   @Param('id') id: string
-  // ): Promise<User | undefined> {
-  //   return this.userService.update(id, updateUserDto);
-  // }
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  update(
+    @Body() updateBoardDto: UpdateBoardDto,
+    @Param('id') id: string
+  ): Promise<Board | undefined> {
+    return this.boardService.update(id, updateBoardDto);
+  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

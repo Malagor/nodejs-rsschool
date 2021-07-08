@@ -8,17 +8,17 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardService } from './boards.service';
 import { Board } from './board.entity';
 import { UpdateBoardDto } from './dto/update-board.dto';
-import { LoginGuard } from '../login/login.guard';
+// import { LoginGuard } from '../login/login.guard';
 
 @Controller('boards')
-@UseGuards(LoginGuard)
+// @UseGuards(LoginGuard)
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 

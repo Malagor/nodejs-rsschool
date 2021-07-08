@@ -8,7 +8,7 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -16,10 +16,10 @@ import { TaskService } from './tasks.service';
 import { Task } from './task.entity';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { CustomError } from '../../middlewares/errorHandler';
-import { LoginGuard } from '../login/login.guard';
+// import { LoginGuard } from '../login/login.guard';
 
 @Controller('boards/:boardId/tasks')
-@UseGuards(LoginGuard)
+// @UseGuards(LoginGuard)
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 

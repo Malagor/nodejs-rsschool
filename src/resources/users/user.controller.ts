@@ -8,7 +8,7 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,10 +17,10 @@ import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryAnswers } from '../../constants';
 import { UserNotFoundError } from './errors/user-not-found.error';
-import { LoginGuard } from '../login/login.guard';
+// import { LoginGuard } from '../login/login.guard';
 
 @Controller('users')
-@UseGuards(LoginGuard)
+// @UseGuards(LoginGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

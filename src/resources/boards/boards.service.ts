@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Board } from './board.entity';
@@ -20,11 +20,11 @@ export class BoardService {
   }
 
   async getOne(id: string): Promise<Board> {
-    const board = await this.boardsRepository.findOneOrFail({ id });
+    const board = await this.boardsRepository.findOne({ id });
     if (!board) {
-      throw new CustomError(
-        HttpStatus.NOT_FOUND,
-        `Board with id: ${id} not found.`
+      throw new HttpException(
+        { message: `Board with id: ${id} not found.` },
+        HttpStatus.NOT_FOUND
       );
     }
 

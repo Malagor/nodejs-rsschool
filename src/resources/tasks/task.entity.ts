@@ -11,57 +11,34 @@ import { Board } from '../boards/board.entity';
 @Entity({ name: 'task' })
 export class Task {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
-  @Column('varchar', { length: 50 })
-  title: string;
+  @Column({ type: 'varchar', length: 50, default: 'Task' })
+  title = 'Task';
 
-  @Column('integer')
-  order: number;
+  @Column({ type: 'integer', default: 0 })
+  order = 0;
 
-  @Column('varchar')
-  description: string;
+  @Column({ type: 'varchar', default: '' })
+  description = '';
 
-  @Column('varchar', { nullable: true })
-  userId: string | null;
+  @Column({ type: 'varchar', default: null, nullable: true })
+  userId: string | null = null;
 
-  @ManyToOne(() => User, (user: User) => user.id, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
+  @Column({ type: 'varchar', default: null, nullable: true })
+  boardId: string | null = null;
+
+  @Column({ type: 'varchar', default: null, nullable: true })
+  columnId: string | null = null;
+
+  @ManyToOne(() => User, (user: User) => user.id, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'userId' })
-  user!: string | null; // UserEntity identifier
-
-  @Column('varchar', { nullable: true })
-  boardId: string | null;
+  user!: User; // UserEntity identifier
 
   @ManyToOne(() => Board, (board: Board) => board.id, {
     onDelete: 'CASCADE',
-    nullable: true,
+    nullable: false,
   })
   @JoinColumn({ name: 'boardId' })
   board!: string | null;
-
-  @Column('varchar', { nullable: true })
-  columnId: string | null;
-
-  constructor(
-    {
-      id,
-      title = 'Task',
-      order = 0,
-      description = '',
-      userId,
-      boardId,
-      columnId,
-    } = {} as Task
-  ) {
-    this.id = id;
-    this.title = title;
-    this.order = order;
-    this.description = description;
-    this.userId = userId;
-    this.boardId = boardId;
-    this.columnId = columnId;
-  }
 }

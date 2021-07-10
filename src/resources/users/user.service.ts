@@ -3,10 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { checkHash, createHash } from '../../helpers/bcryptHash';
+import { createHash } from '../../helpers/bcryptHash';
 // import { CustomError } from '../../middlewares/errorHandler';
-import { generateAccessToken } from '../../helpers/generateAccessToken';
-import { TokenDto } from '../login/dto/tokenDto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryAnswers } from '../../constants';
 import { UserNotFoundError } from './errors/user-not-found.error';
@@ -41,19 +39,8 @@ export class UserService {
     return user;
   }
 
-  async getByLogin(
-    login: string,
-    password: string
-  ): Promise<TokenDto | QueryAnswers.FORBIDDEN> {
-    const user = await this.usersRepository.findOne({ login });
-    if (!user) return QueryAnswers.FORBIDDEN;
-
-    const isCorrectPass = checkHash(password, user?.password ?? '');
-
-    if (!isCorrectPass) return QueryAnswers.FORBIDDEN;
-
-    const token = generateAccessToken(user.id, user.login);
-    return { message: 'User Authorized', token };
+  async getByLogin(login: string): Promise<User | undefined> {
+    return this.usersRepository.findOne({ login });
   }
 
   async create(userDto: CreateUserDto): Promise<User> {

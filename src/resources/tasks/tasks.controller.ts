@@ -8,6 +8,8 @@ import {
   Param,
   Post,
   Put,
+  UseFilters,
+  UseGuards,
   // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
@@ -16,10 +18,12 @@ import { TaskService } from './tasks.service';
 import { Task } from './task.entity';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { CustomError } from '../../middlewares/errorHandler';
-// import { LoginGuard } from '../login/login.guard';
+import { JwtLoginGuard } from '../login/jwt-login.guard';
+import { HttpExceptionFilter } from '../../exceptionFilter/http-exception.filter';
 
 @Controller('boards/:boardId/tasks')
-// @UseGuards(LoginGuard)
+@UseGuards(JwtLoginGuard)
+@UseFilters(new HttpExceptionFilter())
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 

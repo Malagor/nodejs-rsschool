@@ -2,9 +2,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column as ColumnEntity,
+  // OneToMany,
 } from 'typeorm';
 import { Column } from './column.model';
 import { CreateBoardDto } from './dto/create-board.dto';
+// import { Task } from '../tasks/task.entity';
 
 @Entity({ name: 'board' })
 export class Board {
@@ -16,6 +18,9 @@ export class Board {
 
   @ColumnEntity('jsonb', { nullable: true })
   columns: Column[];
+
+  // @OneToMany(() => Task, (task) => task.boardId)
+  // tasks!: Task[];
 
   constructor({ id, title = 'Board', columns } = {} as CreateBoardDto) {
     this.id = id;

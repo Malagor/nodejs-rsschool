@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
@@ -17,10 +18,10 @@ import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryAnswers } from '../../constants';
 import { UserNotFoundError } from './errors/user-not-found.error';
-// import { LoginGuard } from '../login/login.guard';
+import { JwtLoginGuard } from '../login/jwt-login.guard';
 
 @Controller('users')
-// @UseGuards(LoginGuard)
+@UseGuards(JwtLoginGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

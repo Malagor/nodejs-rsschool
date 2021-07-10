@@ -12,6 +12,7 @@ import {
   // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { User } from './user.entity';
@@ -20,29 +21,38 @@ import { QueryAnswers } from '../../constants';
 import { UserNotFoundError } from './errors/user-not-found.error';
 import { JwtLoginGuard } from '../login/jwt-login.guard';
 
+@ApiTags('Users')
 @Controller('users')
 @UseGuards(JwtLoginGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiOperation({ summary: 'Получение всех пользователей' })
+  @ApiResponse({ status: HttpStatus.OK, type: [User] })
   @Get()
   @HttpCode(HttpStatus.OK)
   getAll(): Promise<User[]> {
     return this.userService.getAll();
   }
 
+  @ApiOperation({ summary: 'Получение пользвателя по id' })
+  @ApiResponse({ status: HttpStatus.OK, type: User })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   getOne(@Param('id') id: string): Promise<User> {
     return this.userService.getOne(id);
   }
 
+  @ApiOperation({ summary: 'Создание пользователя' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: User })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.userService.create(createUserDto);
   }
 
+  @ApiOperation({ summary: 'Редактирование пользователя' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: User })
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   async update(
@@ -56,6 +66,8 @@ export class UserController {
     return User.toResponse(user);
   }
 
+  @ApiOperation({ summary: 'Удаление пользователя' })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string): Promise<DeleteResult> {

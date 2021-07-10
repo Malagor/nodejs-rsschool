@@ -13,6 +13,7 @@ import {
   // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskService } from './tasks.service';
 import { Task } from './task.entity';
@@ -21,12 +22,15 @@ import { CustomError } from '../../middlewares/errorHandler';
 import { JwtLoginGuard } from '../login/jwt-login.guard';
 import { HttpExceptionFilter } from '../../exceptionFilter/http-exception.filter';
 
+@ApiTags('Tasks')
 @Controller('boards/:boardId/tasks')
 @UseGuards(JwtLoginGuard)
 @UseFilters(new HttpExceptionFilter())
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
+  @ApiOperation({ summary: 'Получение всех задач на доске' })
+  @ApiResponse({ status: HttpStatus.OK, type: [Task] })
   @Get()
   @HttpCode(HttpStatus.OK)
   getAll(@Param('boardId') boardId: string): Promise<Task[]> {
@@ -39,6 +43,8 @@ export class TaskController {
     return this.taskService.getAll(boardId);
   }
 
+  @ApiOperation({ summary: 'Получение задачи по ID' })
+  @ApiResponse({ status: HttpStatus.OK, type: Task })
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   getOne(
@@ -48,6 +54,8 @@ export class TaskController {
     return this.taskService.getOne(id, boardId);
   }
 
+  @ApiOperation({ summary: 'Создание задачи' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: Task })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(
@@ -57,6 +65,8 @@ export class TaskController {
     return this.taskService.create(boardId, createTaskDto);
   }
 
+  @ApiOperation({ summary: 'Редактирование задачи' })
+  @ApiResponse({ status: HttpStatus.OK, type: Task })
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   update(
@@ -67,6 +77,8 @@ export class TaskController {
     return this.taskService.update({ id, boardId, updateTaskDto });
   }
 
+  @ApiOperation({ summary: 'Удаление задачи' })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(

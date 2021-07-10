@@ -1,7 +1,25 @@
-export interface CreateBoardDto {
-  readonly id: string;
+import { ApiProperty } from '@nestjs/swagger';
+import { ColumnDto } from './create-column.dto';
 
-  readonly title: string;
+export class CreateBoardDto {
+  @ApiProperty({
+    example: 'Проектные работы',
+    description: 'Заголовок доски',
+  })
+  readonly title: string = 'Board';
 
-  readonly columns?: [];
+  @ApiProperty({
+    example: [
+      {
+        title: 'TODO',
+        order: 0,
+      },
+      {
+        title: 'inProcess',
+        order: 1,
+      },
+    ],
+    description: 'Массив колонок',
+  })
+  readonly columns: ColumnDto[] = [];
 }

@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 // @Entity()
 export class Column {
   // @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   // @ColumnEntity('varchar', { length: 50 })
   title: string;

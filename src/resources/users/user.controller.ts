@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Param,
   Post,
@@ -47,8 +48,15 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    try {
+      return await this.userService.create(createUserDto);
+    } catch (e) {
+      throw new HttpException(
+        { message: e.message, detail: e.detail },
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 
   @ApiOperation({ summary: 'Редактирование пользователя' })

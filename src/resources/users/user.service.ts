@@ -30,15 +30,6 @@ export class UserService {
     return User.toResponse(user);
   }
 
-  async getOneByLogin(login: string): Promise<User> {
-    const user = await this.usersRepository.findOne({ login });
-    if (!user) {
-      throw new UserNotFoundError();
-    }
-
-    return user;
-  }
-
   async getByLogin(login: string): Promise<User | undefined> {
     return this.usersRepository.findOne({ login });
   }
@@ -51,9 +42,9 @@ export class UserService {
     });
     const user = await this.usersRepository.save(newUser);
 
-    if (!user) {
-      throw new UserNotFoundError();
-    }
+    // if (!user) {
+    //   throw new UserNotFoundError();
+    // }
 
     return User.toResponse(user);
   }

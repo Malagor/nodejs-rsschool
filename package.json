@@ -19,7 +19,7 @@
     "typeorm": "ts-node --files -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/common/ormconfig.ts",
     "db:create": "npm run typeorm migration:generate -n TodoMigrations",
     "db:run": "npm run typeorm -- migration:run",
-    "migrationg": "ts-node ./node_modules/typeorm/cli.js migration:generate -n N"
+    "migrationg": "ts-node ./node_modules/typeorm/cli.js --config src/common/ormconfig.ts migration:generate -n N"
   },
   "keywords": [
     "rs",
@@ -52,13 +52,17 @@
     ]
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^8.5.2",
     "@types/uuid": "^8.3.0",
+    "bcrypt": "^5.0.1",
     "chalk": "^4.1.1",
     "cross-env": "7.0.3",
     "dotenv": "9.0.0",
     "express": "4.17.1",
     "express-async-handler": "^1.1.4",
     "http-status-codes": "^2.1.4",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0",
     "sequelize": "^6.6.2",
     "swagger-ui-express": "4.1.6",

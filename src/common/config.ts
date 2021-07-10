@@ -9,6 +9,7 @@ const {
   PORT,
   NODE_ENV,
   JWT_SECRET_KEY,
+  SALT,
   AUTH_MODE,
   POSTGRES_PORT,
   POSTGRES_USER,
@@ -16,12 +17,14 @@ const {
   POSTGRES_DB,
   POSTGRES_HOST,
   TIME_ZONE,
+  EXPIRES_TIME_SEC,
 } = process.env;
 
 export const env = {
   PORT,
   NODE_ENV,
   JWT_SECRET_KEY,
+  SALT,
   AUTH_MODE: AUTH_MODE === 'true',
   POSTGRES_PORT,
   POSTGRES_USER,
@@ -29,4 +32,5 @@ export const env = {
   POSTGRES_DB,
   POSTGRES_HOST,
   TIME_ZONE,
+  EXPIRES_TIME_SEC,
 };

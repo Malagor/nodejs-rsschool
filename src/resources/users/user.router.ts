@@ -4,6 +4,7 @@ import { User } from '../../entities/User';
 import * as usersService from './user.service';
 import { CustomError } from '../../middlewares/errorHandler';
 import { QueryAnswers } from '../../types';
+import { createHash } from '../../helpers/bcryptHash';
 
 const router: Router = Router();
 const {
@@ -32,7 +33,16 @@ router
   // CREATE
 
   .post(async (req: Request, res: Response, next: NextFunction) => {
-    const user = await usersService.create(new User({ ...req.body }));
+    const { password } = req.body;
+    if (!password) {
+      next(new CustomError(BAD_REQUEST, `No password`));
+      return;
+    }
+
+    const passwordHash = createHash(password);
+    const user = await usersService.create(
+      new User({ ...req.body, password: passwordHash })
+    );
     if (user === QueryAnswers.NOT_FOUND) {
       next(new CustomError(NOT_FOUND, `User not created`));
       return;

@@ -1,5 +1,4 @@
 import * as usersRepo from './user.postgres.repository';
-// import * as tasksService from '../tasks/tasks.service';
 import { QueryAnswers } from '../../types';
 import { User } from '../../entities/User';
 

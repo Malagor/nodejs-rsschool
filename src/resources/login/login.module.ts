@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-// import { PassportModule } from '@nestjs/passport';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
+// eslint-disable-next-line import/no-cycle
 import { UserModule } from '../users/user.module';
 import { env } from '../../common/config';
 
@@ -10,12 +10,12 @@ import { env } from '../../common/config';
   providers: [LoginService],
   controllers: [LoginController],
   imports: [
-    UserModule,
-    // PassportModule,
+    forwardRef(() => UserModule),
     JwtModule.register({
       secret: env.JWT_SECRET_KEY,
       signOptions: { expiresIn: env.EXPIRES_TIME_SEC },
     }),
   ],
+  exports: [LoginService, JwtModule],
 })
 export class LoginModule {}

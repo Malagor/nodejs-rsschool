@@ -25,7 +25,7 @@ export class LoginController {
     @Req() response: Response
   ): Promise<TokenDto> {
     const { login, password } = authUserDto;
-    const result = await this.loginService.getByLogin(login, password);
+    const result = await this.loginService.login(login, password);
 
     if (result === QueryAnswers.FORBIDDEN) {
       throw new ForbiddenException('Login or/and password is uncorrected');

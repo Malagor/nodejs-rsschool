@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TokenDto } from './dto/tokenDto';
 import { UserService } from '../users/user.service';
-import { QueryAnswers } from '../../constants';
 import { checkHash } from '../../helpers/bcryptHash';
 import { UserNotFoundError } from '../users/errors/user-not-found.error';
 
@@ -13,10 +12,7 @@ export class LoginService {
     private jwtService: JwtService
   ) {}
 
-  async login(
-    login: string,
-    password: string
-  ): Promise<TokenDto | QueryAnswers.FORBIDDEN> {
+  async login(login: string, password: string): Promise<TokenDto> {
     const user = await this.userService.getByLogin(login);
 
     if (!user) {

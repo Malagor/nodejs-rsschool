@@ -1,11 +1,12 @@
 import {
   Body,
   Controller,
-  ForbiddenException,
   HttpCode,
+  HttpException,
   HttpStatus,
   Post,
   Req,
+  // Res,
   // Res
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -13,7 +14,6 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthUserDto } from './dto/authUserDto';
 import { TokenDto } from './dto/tokenDto';
 import { LoginService } from './login.service';
-import { QueryAnswers } from '../../constants';
 
 @ApiTags('Login')
 @Controller('login')
@@ -29,13 +29,13 @@ export class LoginController {
     @Req() response: Response
   ): Promise<TokenDto> {
     const { login, password } = authUserDto;
-    const result = await this.loginService.login(login, password);
 
-    if (result === QueryAnswers.FORBIDDEN) {
-      throw new ForbiddenException('Login or/and password is uncorrected');
+    try {
+      const result = await this.loginService.login(login, password);
+      response.setHeader('authorization', `Bearer ${result.token}`);
+      return result;
+    } catch (e) {
+      throw new HttpException({ message: e.message }, HttpStatus.FORBIDDEN);
     }
-    response.header('authorization', `Bearer ${result.token}`);
-
-    return result;
   }
 }

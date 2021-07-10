@@ -1,13 +1,26 @@
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
-import { env } from './common/config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    // logger: false,
-  });
+  let app;
+  const nestMode = process.env['NESTJS_MODE'];
+
+  if (nestMode === 'express') {
+    app = await NestFactory.create(AppModule, {});
+  } else if (nestMode === 'fastify') {
+    app = await NestFactory.create<NestFastifyApplication>(
+      AppModule,
+      new FastifyAdapter()
+    );
+  } else {
+    process.exit(1);
+  }
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Trello Service')
@@ -20,6 +33,12 @@ async function bootstrap() {
   SwaggerModule.setup('/doc', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(env.PORT || 3000);
+  await app.listen(process.env['PORT'] || 3000, () => {
+    process.stdout.write(
+      `App start in "${nestMode.toUpperCase()}-MODE" at http://localhost:${
+        process.env['PORT']
+      }`
+    );
+  });
 }
 bootstrap();

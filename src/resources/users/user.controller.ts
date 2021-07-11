@@ -3,14 +3,12 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   HttpException,
   HttpStatus,
   Param,
   Post,
   Put,
   UseGuards,
-  // UseGuards,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -31,7 +29,6 @@ export class UserController {
   @ApiOperation({ summary: 'Получение всех пользователей' })
   @ApiResponse({ status: HttpStatus.OK, type: [User] })
   @Get()
-  @HttpCode(HttpStatus.OK)
   getAll(): Promise<User[]> {
     return this.userService.getAll();
   }
@@ -39,7 +36,6 @@ export class UserController {
   @ApiOperation({ summary: 'Получение пользвателя по id' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   getOne(@Param('id') id: string): Promise<User> {
     return this.userService.getOne(id);
   }
@@ -47,7 +43,6 @@ export class UserController {
   @ApiOperation({ summary: 'Создание пользователя' })
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     try {
       return await this.userService.create(createUserDto);
@@ -62,7 +57,6 @@ export class UserController {
   @ApiOperation({ summary: 'Редактирование пользователя' })
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
   @Put(':id')
-  @HttpCode(HttpStatus.OK)
   async update(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: string
@@ -77,7 +71,6 @@ export class UserController {
   @ApiOperation({ summary: 'Удаление пользователя' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.userService.remove(id);
   }

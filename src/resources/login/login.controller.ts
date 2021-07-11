@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  HttpCode,
   HttpException,
   HttpStatus,
   Post,
@@ -19,11 +18,7 @@ export class LoginController {
   @ApiOperation({ summary: 'Получение токена пользователя' })
   @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
   @Post()
-  @HttpCode(HttpStatus.OK)
-  async checkUser(
-    @Body() authUserDto: AuthUserDto
-    // @Req() response: Response
-  ): Promise<TokenDto> {
+  async checkUser(@Body() authUserDto: AuthUserDto): Promise<TokenDto> {
     const { login, password } = authUserDto;
 
     try {

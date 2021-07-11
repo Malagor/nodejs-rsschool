@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
+  // HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -32,7 +32,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Получение всех задач на доске' })
   @ApiResponse({ status: HttpStatus.OK, type: [Task] })
   @Get()
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
   getAll(@Param('boardId') boardId: string): Promise<Task[]> {
     if (!boardId) {
       throw new CustomError(
@@ -46,7 +46,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Получение задачи по ID' })
   @ApiResponse({ status: HttpStatus.OK, type: Task })
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
   getOne(
     @Param('boardId') boardId: string,
     @Param('id') id: string
@@ -57,7 +57,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Создание задачи' })
   @ApiResponse({ status: HttpStatus.CREATED, type: Task })
   @Post()
-  @HttpCode(HttpStatus.CREATED)
+  // @HttpCode(HttpStatus.CREATED)
   create(
     @Param('boardId') boardId: string,
     @Body() createTaskDto: CreateTaskDto
@@ -68,7 +68,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Редактирование задачи' })
   @ApiResponse({ status: HttpStatus.OK, type: Task })
   @Put(':id')
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
   update(
     @Param('boardId') boardId: string,
     @Param('id') id: string,
@@ -80,7 +80,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Удаление задачи' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  // @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param('boardId') boardId: string,
     @Param('id') id: string

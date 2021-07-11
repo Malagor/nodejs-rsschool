@@ -11,11 +11,11 @@ import { initDB } from './helpers/initDB';
 
 async function bootstrap() {
   let app;
-  const nestMode = process.env['NESTJS_MODE'];
+  const nestMode = process.env['USE_FASTIFY'];
 
-  if (nestMode === 'express') {
+  if (nestMode === 'false') {
     app = await NestFactory.create(AppModule, {});
-  } else if (nestMode === 'fastify') {
+  } else if (nestMode === 'true') {
     app = await NestFactory.create<NestFastifyApplication>(
       AppModule,
       new FastifyAdapter()
@@ -38,9 +38,9 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env['PORT'] || 3000, '0.0.0.0', () => {
     process.stdout.write(
-      `App start in "${nestMode.toUpperCase()}-MODE" at http://localhost:${
-        process.env['PORT']
-      }\n:)(:\n`
+      `App start in "${
+        nestMode ? 'FASTIFY' : 'EXPPESS'
+      }-MODE" at http://localhost:${process.env['PORT']}\n:)(:\n`
     );
     initDB();
   });

@@ -12,6 +12,7 @@ import { LoginModule } from './resources/login/login.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot(config),
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
@@ -19,7 +20,6 @@ import { LoginModule } from './resources/login/login.module';
     UserModule,
     BoardModule,
     TaskModule,
-    TypeOrmModule.forRoot(config),
   ],
   controllers: [AppController],
   providers: [AppService],

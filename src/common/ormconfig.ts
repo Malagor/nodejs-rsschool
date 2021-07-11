@@ -14,17 +14,17 @@ const {
 
 const config: ConnectionOptions = {
   type: 'postgres',
-  synchronize: true,
+  synchronize: false,
   host: POSTGRES_HOST,
   port: +`${POSTGRES_PORT}`,
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
-  // entities: ['./src/resources/**/*.entity.ts'],
+  // entities: ['./src/resources/**/*.entity.{ts,js}'],
   entities: [User, Board, Task],
   logging: false,
   dropSchema: false,
-  migrations: ['./src/migration/**/*.{ts,js}'],
+  migrations: ['./build/migration/**/*.{ts,js}'],
   migrationsRun: true,
   cli: {
     migrationsDir: 'src/migration',

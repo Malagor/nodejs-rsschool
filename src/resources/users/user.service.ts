@@ -4,7 +4,6 @@ import { DeleteResult, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { createHash } from '../../helpers/bcryptHash';
-// import { CustomError } from '../../middlewares/errorHandler';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryAnswers } from '../../constants';
 import { UserNotFoundError } from './errors/user-not-found.error';
@@ -36,15 +35,11 @@ export class UserService {
 
   async create(userDto: CreateUserDto): Promise<User> {
     const passwordHash = createHash(userDto.password);
-    const newUser = this.usersRepository.create({
+    const newUser = await this.usersRepository.create({
       ...userDto,
       password: passwordHash,
     });
     const user = await this.usersRepository.save(newUser);
-
-    // if (!user) {
-    //   throw new UserNotFoundError();
-    // }
 
     return User.toResponse(user);
   }

@@ -6,6 +6,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 async function bootstrap() {
   let app;
@@ -32,12 +33,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('/doc', app, document);
 
+  app.useGlobalInterceptors(new LoggingInterceptor());
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env['PORT'] || 3000, '0.0.0.0', () => {
     process.stdout.write(
       `App start in "${nestMode.toUpperCase()}-MODE" at http://localhost:${
         process.env['PORT']
-      }`
+      }\n:)(:\n`
     );
   });
 }

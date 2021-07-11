@@ -5,11 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  Req,
-  // Res,
-  // Res
 } from '@nestjs/common';
-import { Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthUserDto } from './dto/authUserDto';
 import { TokenDto } from './dto/tokenDto';
@@ -25,15 +21,13 @@ export class LoginController {
   @Post()
   @HttpCode(HttpStatus.OK)
   async checkUser(
-    @Body() authUserDto: AuthUserDto,
-    @Req() response: Response
+    @Body() authUserDto: AuthUserDto
+    // @Req() response: Response
   ): Promise<TokenDto> {
     const { login, password } = authUserDto;
 
     try {
-      const result = await this.loginService.login(login, password);
-      response.setHeader('authorization', `Bearer ${result.token}`);
-      return result;
+      return await this.loginService.login(login, password);
     } catch (e) {
       throw new HttpException({ message: e.message }, HttpStatus.FORBIDDEN);
     }

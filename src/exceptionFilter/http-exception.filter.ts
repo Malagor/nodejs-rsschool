@@ -5,6 +5,8 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import chalk from 'chalk';
+import { coloredStatusCode } from '../helpers/coloredSratusCode';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -15,7 +17,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    response.status(status).json({
+    const { method, url, body, query } = request;
+
+    const strForConsole = `${chalk.red('[ERROR]')} ${chalk.blue(
+      method
+    )} url:${url} query:${JSON.stringify(query)} body:${JSON.stringify(
+      body || {}
+    )}  code:${coloredStatusCode(status)}`;
+
+    process.stdout.write(`${strForConsole}\n`);
+
+    response.status(status).send({
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,

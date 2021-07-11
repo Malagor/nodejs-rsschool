@@ -1,46 +1,79 @@
-import { QueryAnswers } from '../../types';
-import * as taskRepo from './tasks.postgres.repository';
-import { Task } from '../../entities/Task';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
+import { Task } from './task.entity';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { CustomError } from '../../middlewares/errorHandler';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
-const getAll = (boardId: string): Promise<Task[]> => taskRepo.getAll(boardId);
+@Injectable()
+export class TaskService {
+  constructor(
+    @InjectRepository(Task)
+    private tasksRepository: Repository<Task>
+  ) {}
 
-const get = (
-  boardId: string,
-  taskId: string
-): Promise<Task | QueryAnswers.NOT_FOUND> => taskRepo.get(boardId, taskId);
+  async getAll(boardId: string): Promise<Task[]> {
+    const tasks = await this.tasksRepository.find({ boardId });
+    if (!tasks) {
+      throw new CustomError(
+        HttpStatus.NOT_FOUND,
+        `Error request tasks from board with id: ${boardId}`
+      );
+    }
+    return tasks;
+  }
 
-const create = (taskData: Task): Promise<Task | QueryAnswers.NOT_FOUND> =>
-  taskRepo.create(taskData);
+  async getOne(id: string, boardId: string): Promise<Task> {
+    const task = await this.tasksRepository.findOne({ id, boardId });
+    if (!task) {
+      throw new HttpException(`No task with id: ${id}`, HttpStatus.NOT_FOUND);
+    }
 
-const update = (
-  boardId: string,
-  taskId: string,
-  taskData: Task
-): Promise<Task | QueryAnswers.NOT_FOUND> =>
-  taskRepo.update(boardId, taskId, taskData);
+    return task;
+  }
 
-const remove = (
-  boardId: string,
-  taskId: string
-): Promise<QueryAnswers.NOT_FOUND | QueryAnswers.DELETED> =>
-  taskRepo.remove(boardId, taskId);
+  async create(boardId: string, taskDto: CreateTaskDto): Promise<Task> {
+    const newTask = await this.tasksRepository.create({ ...taskDto, boardId });
+    return this.tasksRepository.save(newTask);
+  }
 
-// const deleteAllTasksFromBoard = (
-//   boardId: string
-// ): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> =>
-//   taskRepo.deleteTasksFromBoard(boardId);
-//
-// const deleteUserFromTask = (
-//   userId: string
-// ): Promise<QueryAnswers.DELETED | QueryAnswers.NOT_FOUND> =>
-//   taskRepo.deleteUserFromTask(userId);
+  async update(params: {
+    id: string;
+    boardId: string;
+    updateTaskDto: UpdateTaskDto;
+  }): Promise<Task> {
+    const { id, boardId, updateTaskDto } = params;
+    const task = await this.tasksRepository.findOneOrFail({ id, boardId });
 
-export {
-  getAll,
-  get,
-  create,
-  update,
-  remove,
-  // deleteAllTasksFromBoard,
-  // deleteUserFromTask,
-};
+    if (!task) {
+      throw new CustomError(
+        HttpStatus.NOT_FOUND,
+        `Not found task with id: ${id}`
+      );
+    }
+
+    this.tasksRepository.merge(task, updateTaskDto);
+    return this.tasksRepository.save(task);
+  }
+
+  async remove(params: { id: string; boardId: string }): Promise<DeleteResult> {
+    const { id, boardId } = params;
+    // const res = await this.tasksRepository.delete({ id, boardId });
+    // if (!res) {
+    //   throw new CustomError(
+    //     HttpStatus.NOT_FOUND,
+    //     `Not found task with id: ${id}`
+    //   );
+    // }
+    // return res;
+    return this.tasksRepository.delete({ id, boardId });
+    // if (!res) {
+    //   throw new CustomError(
+    //     HttpStatus.NOT_FOUND,
+    //     `Not found task with id: ${id}`
+    //   );
+    // }
+    // return res;
+  }
+}

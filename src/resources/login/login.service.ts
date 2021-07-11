@@ -1,7 +1,31 @@
-import * as loginRepo from './login.postgres.repository';
-import { QueryAnswers } from '../../types';
-import { AuthData } from './login.model';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { TokenDto } from './dto/tokenDto';
+import { UserService } from '../users/user.service';
+import { checkHash } from '../../helpers/bcryptHash';
+import { UserNotFoundError } from '../users/errors/user-not-found.error';
 
-export const get = (
-  login: string
-): Promise<AuthData | QueryAnswers.FORBIDDEN> => loginRepo.get(login);
+@Injectable()
+export class LoginService {
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService
+  ) {}
+
+  async login(login: string, password: string): Promise<TokenDto> {
+    const user = await this.userService.getByLogin(login);
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+
+    const isCorrectPass = checkHash(password, user.password ?? '');
+
+    if (!isCorrectPass) {
+      throw new UnauthorizedException();
+    }
+
+    const token = this.jwtService.sign({ id: user.id, login: user.login });
+    return { message: 'User Authorized', token };
+  }
+}

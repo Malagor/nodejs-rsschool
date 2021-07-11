@@ -1,20 +1,56 @@
-import { QueryAnswers } from '../../types';
-import { Board } from '../../entities/Board';
-import * as boardRepo from './board.postgres.repository';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
+import { Board } from './board.entity';
+// import { CreateBoardDto } from './dto/create-board.dto';
+import { CustomError } from '../../middlewares/errorHandler';
+import { UpdateBoardDto } from './dto/update-board.dto';
 
-const getAll = (): Promise<Board[]> => boardRepo.getAll();
+// import { CustomError } from '../../middlewares/errorHandler';
 
-const get = (id: string): Promise<Board | QueryAnswers.NOT_FOUND> =>
-  boardRepo.get(id);
+@Injectable()
+export class BoardService {
+  constructor(
+    @InjectRepository(Board)
+    private boardsRepository: Repository<Board>
+  ) {}
 
-const create = (board: Board): Promise<Board | QueryAnswers.NOT_FOUND> =>
-  boardRepo.create(board);
+  async getAll(): Promise<Board[]> {
+    return this.boardsRepository.find();
+  }
 
-const update = (
-  id: string,
-  board: Board
-): Promise<Board | QueryAnswers.NOT_FOUND> => boardRepo.update(id, board);
+  async getOne(id: string): Promise<Board> {
+    const board = await this.boardsRepository.findOne({ id });
+    if (!board) {
+      throw new HttpException(
+        { message: `Board with id: ${id} not found.` },
+        HttpStatus.NOT_FOUND
+      );
+    }
 
-const remove = (id: string): Promise<QueryAnswers> => boardRepo.remove(id);
+    return board;
+  }
 
-export { getAll, get, create, update, remove };
+  async create(boardDto: Board): Promise<Board> {
+    const newBoard = this.boardsRepository.create(boardDto);
+    return this.boardsRepository.save(newBoard);
+  }
+
+  async update(id: string, boardDto: UpdateBoardDto): Promise<Board> {
+    const board = await this.boardsRepository.findOneOrFail({ id });
+
+    if (!board) {
+      throw new CustomError(
+        HttpStatus.NOT_FOUND,
+        `Not found board with id: ${id}`
+      );
+    }
+
+    this.boardsRepository.merge(board, boardDto);
+    return this.boardsRepository.save(board);
+  }
+
+  async remove(id: string): Promise<DeleteResult> {
+    return this.boardsRepository.delete({ id });
+  }
+}

@@ -1,24 +1,24 @@
 version: '3'
 services:
-  task6-node:
+  malagor-server:
     image: malagor/node
     build: .
-    command: npm run start
+    command: npm run start:dev
     ports:
     - ${PORT}:${PORT}
     depends_on:
-      - task6-postgres
+      - malagor-database
     environment:
       - PORT=${PORT}
       - TZ=${TIME_ZONE}
-      - POSTGRES_HOST=task6-postgres
+      - POSTGRES_HOST=host.docker.internal
     restart: always
     volumes:
     - ./logs:/usr/src/app/src/logs
     - ./src:/usr/src/app/src
     networks:
        - malagor-net
-  task6-postgres:
+  malagor-database:
     image: malagor/postgres
     build:
       ./database/

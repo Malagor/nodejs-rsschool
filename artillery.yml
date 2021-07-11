@@ -17,4 +17,21 @@ scenarios:
     flow:
       - get:
           url: "/users"
+          headers:
+            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0MDgwYTY4LTgzZjctNDkwMC1hNGZjLTc2OWJmYWRjMzZmZCIsImxvZ2luIjoiYWRtaW4iLCJpYXQiOjE2MjYwMjMyMjUsImV4cCI6MTYyNjEwOTYyNX0.6OzV71m0kiCZjeom8iAKTY4X82tZWg6pOjJA5g3-IWM"
+      - get:
+          url: "/users/c8ee71b9-1cf8-4643-ba37-4e0891e1a126"
+          headers:
+            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0MDgwYTY4LTgzZjctNDkwMC1hNGZjLTc2OWJmYWRjMzZmZCIsImxvZ2luIjoiYWRtaW4iLCJpYXQiOjE2MjYwMjMyMjUsImV4cCI6MTYyNjEwOTYyNX0.6OzV71m0kiCZjeom8iAKTY4X82tZWg6pOjJA5g3-IWM"
+      - post:
+          url: "/boards"
+          json:
+              title: "Board"
+              columns:
+                - json:
+                    title: "First column"
+                    order: 0
+                    test: "test"
+          headers:
+            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg0MDgwYTY4LTgzZjctNDkwMC1hNGZjLTc2OWJmYWRjMzZmZCIsImxvZ2luIjoiYWRtaW4iLCJpYXQiOjE2MjYwMjMyMjUsImV4cCI6MTYyNjEwOTYyNX0.6OzV71m0kiCZjeom8iAKTY4X82tZWg6pOjJA5g3-IWM"
       - think: 5

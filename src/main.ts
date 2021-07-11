@@ -7,6 +7,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { initDB } from './helpers/initDB';
 
 async function bootstrap() {
   let app;
@@ -41,6 +42,7 @@ async function bootstrap() {
         process.env['PORT']
       }\n:)(:\n`
     );
+    initDB();
   });
 }
 bootstrap();
